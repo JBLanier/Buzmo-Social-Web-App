@@ -1,0 +1,12 @@
+dbConfig:
+  endpoint: "jdbc:oracle:thin:@uml.cs.ucsb.edu:1521:xe"
+  username: buzmo
+  password: dbTesting123
+server:
+  type: simple
+  adminContextPath: /admin
+  applicationContextPath: /
+  rootPath: /api
+  connector:
+    type: http
+    port: 8080
