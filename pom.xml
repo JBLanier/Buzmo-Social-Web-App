@@ -23,11 +23,9 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
-            <groupId>ojdbc6</groupId>
-            <artifactId>com.oracle</artifactId>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
             <version>11.2.0.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/ojdbc6.jar</systemPath>
         </dependency>
         <!-- For DB connection pooling. -->
         <dependency>
@@ -40,7 +38,6 @@
     <build>
         <finalName>BuzMo</finalName>
         <plugins>
-            <!-- Maven Shade Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

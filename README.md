@@ -10,7 +10,7 @@ To build `cd` to the repo directory then:
 
 To run:
 
-    java -jar target/BuzMo.jar server config/brian.yaml
+    java -jar target/BuzMo.jar server config/local.yaml
 
 Try visiting `/api/hello` (the sample HelloResource) or `/admin/healthcheck` (part of
 Dropwizard) or `/` (the frontend).
