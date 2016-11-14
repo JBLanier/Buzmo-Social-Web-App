@@ -8,13 +8,13 @@
     
     POST /auth/login
     UserDAO.getPasswd(String email)
-    UserDAO.getUser(long uid)
+    UserDAO.getUser(long userid)
     UserDAO.getUser(String email)
 
 # Friends
 
     GET /friends/requests
-    FriendsDAO.getRequests(long uid)
+    FriendsDAO.getRequests(long userid)
     
     POST /friends/request/respond
     {"mid": 123, "response": "ACCEPT"}
@@ -22,10 +22,10 @@
     FriendsDAO.declineRequest(long mid)
     
     POST /friends/request/create
-    FriendsDAO.createRequest(long sender_uid, long recipient_uid)
+    FriendsDAO.createRequest(long sender_userid, long recipient_userid)
     
     GET /chatgroups/invites
-    ChatGroupsDAO.getInvites(long uid)
+    ChatGroupsDAO.getInvites(long userid)
     
     POST /chatgroups/invite/respond
     ChatGroupsDAO.acceptInvite(long mid)
@@ -33,7 +33,7 @@
     
     GET /friends/list
     Get list of all my friends.
-    FriendsDAO.getFriends(long uid)
+    FriendsDAO.getFriends(long userid)
     
     POST /users/search
     searches all users in database
@@ -45,7 +45,7 @@
 
     GET /mycircle/list?offset=0
     returns mycirle messages directed to user and broadcast by friends
-    MyCircleDAO.getUserMessages(long uid, int offset, int count)  
+    MyCircleDAO.getUserMessages(long userid, int offset, int count)  
     
     POST /mycircle/search
     {"offset": 0, "topics": ["dogs", "bikes"]}
@@ -56,7 +56,7 @@
     
     POST /mycircle/create
     {"msg": "Hello I'm at UCSB", "topics": ["dogs", "bikes"], "public":true, "recipients": []}
-    MyCircleDAO.createMessage(String msg, List<String> topics, Boolean public, List<long> uids)
+    MyCircleDAO.createMessage(String msg, List<String> topics, Boolean public, List<long> userids)
     
     GET /mycircle/delete
 
@@ -66,53 +66,53 @@
     
     GET /messages/list?offset=0
     returns users friends sorted by latest massage to or from them (not counting those deleted by home user)
-    PrivateMessageDAO.getConversations(long uid, int offset, int count); 
+    PrivateMessageDAO.getConversations(long userid, int offset, int count); 
     
     GET /messages/conversation?user=321234
     returns messages to and from that friend sorted by timestamp (not counting those deleted by home user)
-    PrivateMessageDAO.getConversation(long uid, long friend_uid, int offset, int count);
+    PrivateMessageDAO.getConversation(long userid, long friend_userid, int offset, int count);
     
     POST /messages/delete
     {"mid": 3213123}
-    PrivateMessageDAO.markForDeletion(long uid, long mid)
+    PrivateMessageDAO.markForDeletion(long userid, long mid)
     
     POST /messages/create
     {"msg": "Hi Brian this is a PM"}
-    PrivateMessageDAO.createNewMessage(long sender_uid, long recipient_uid, String msg)
+    PrivateMessageDAO.createNewMessage(long sender_userid, long recipient_userid, String msg)
     
 ## ChatGroups
     
     GET /chatgroups/list?offset=0
     returns users chatgroups sorted by latest massage to or from them (not counting those deleted by home user)
-    ChatGroupsDAO.getConversations(long uid, int offset, count)
+    ChatGroupsDAO.getConversations(long userid, int offset, count)
     
     GET /chatgroups/conversation?cgid=3434
     returns messages to and from that chatgroup sorted by timestamp (not counting those deleted by home user)
-    ChatGroupsDAO.getConversation(long uid, long cgid, int offset, int count)
+    ChatGroupsDAO.getConversation(long userid, long cgid, int offset, int count)
     
     POST /chatgroups/conversation/delete
     {"mid": 43434344, "cgid": 432432}
-    ChatGroupsDAO.markForDeletion(long uid, long cgid, long mid)
+    ChatGroupsDAO.markForDeletion(long userid, long cgid, long mid)
     
     POST /chatgroups/conversation/create
     {"msg": "Hello group! This is a message", long cgid": 433243}
-    ChatGroupsDAO.createNewMessage(long sender_uid, long cgid, String msg)
+    ChatGroupsDAO.createNewMessage(long sender_userid, long cgid, String msg)
     
     GET /chatgroups?cgid=434343
     ChatGroupsDAO.getChatGroup(long cgid)
     
     POST /chatgroups/invite/create
-    ChatGroupsDAO.createInvite(long cgid, long recipient_uid)
+    ChatGroupsDAO.createInvite(long cgid, long recipient_userid)
     
     POST /chatgroups/create
-    ChatGroupsDAO.createChatGroup(long owner_uid, String name, int message_duration)
+    ChatGroupsDAO.createChatGroup(long owner_userid, String name, int message_duration)
     
     POST /chatgroups/delete
-    Before calling the DAO method, we must verify that the uid posting this is the owner of the group.
+    Before calling the DAO method, we must verify that the userid posting this is the owner of the group.
     ChatGroupsDAO.deleteChatGroup(long cgid);
     
     POST /chatgroups/update
-    Before calling the DAO method, we must verify that the uid posting this is the owner of the group.
+    Before calling the DAO method, we must verify that the userid posting this is the owner of the group.
     ChatGroupsDAO.updateName(long cgid, String new_name, int new_duration)
     
     
