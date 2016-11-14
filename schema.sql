@@ -9,7 +9,7 @@ CREATE TABLE users (
   PRIMARY KEY (userid),
   UNIQUE (email)
 );
-CREATE SEQUENCE userid_seq;
+CREATE SEQUENCE userid_seq START WITH 1;
 CREATE TRIGGER userid_trig
   BEFORE INSERT ON users
   FOR EACH ROW
@@ -18,6 +18,7 @@ CREATE TRIGGER userid_trig
       INTO :NEW.userid
       FROM dual;
   END;
+/
 CREATE TABLE friends (
   u1 NUMBER(15),
   u2 NUMBER(15),
@@ -38,13 +39,14 @@ FOR EACH ROW
       RAISE_APPLICATION_ERROR( -20001, 'A symmetric friendship already exists.' );
     END IF;
   END;
+/
 CREATE TABLE topics (
   tid NUMBER(15),
   label VARCHAR2(30),
   PRIMARY KEY (tid),
   UNIQUE(label)
 );
-CREATE SEQUENCE tid_seq;
+CREATE SEQUENCE tid_seq START WITH 1;
 CREATE TRIGGER tid_trig
 BEFORE INSERT ON topics
 FOR EACH ROW
@@ -53,6 +55,7 @@ FOR EACH ROW
     INTO :NEW.tid
     FROM dual;
   END;
+/
 CREATE TABLE user_topics (
   userid NUMBER(15),
   tid NUMBER(15),
@@ -69,7 +72,7 @@ CREATE TABLE messages (
   PRIMARY KEY (mid),
   FOREIGN KEY (sender) REFERENCES users(userid) ON DELETE CASCADE
 );
-CREATE SEQUENCE mid_seq;
+CREATE SEQUENCE mid_seq START WITH 1;
 CREATE TRIGGER mid_trig
 BEFORE INSERT ON messages
 FOR EACH ROW
@@ -78,6 +81,7 @@ FOR EACH ROW
     INTO :NEW.mid
     FROM dual;
   END;
+/
 CREATE TABLE mc_messages (
   mid NUMBER(15),
   is_public SMALLINT,
@@ -109,7 +113,7 @@ CREATE TABLE chat_groups (
   PRIMARY KEY (cgid),
   FOREIGN KEY (owner) REFERENCES users(userid) ON DELETE SET NULL
 );
-CREATE SEQUENCE cgid_seq;
+CREATE SEQUENCE cgid_seq START WITH 1;
 CREATE TRIGGER cgid_trig
 BEFORE INSERT ON chat_groups
 FOR EACH ROW
@@ -118,6 +122,7 @@ FOR EACH ROW
     INTO :NEW.cgid
     FROM dual;
   END;
+/
 CREATE TABLE chat_group_members (
   userid NUMBER(15),
   cgid NUMBER(15), /* chat group id */
