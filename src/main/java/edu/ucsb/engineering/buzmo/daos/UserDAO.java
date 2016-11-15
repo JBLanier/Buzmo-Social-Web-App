@@ -22,29 +22,19 @@ public class UserDAO {
         User toReturn = null;
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT email, name, screename, phone, is_manager FROM users WHERE userid = ?");
+            pstmt = conn.prepareStatement("SELECT email, name, screename, phone, is_manager " +
+                    "FROM users WHERE userid = ?");
             pstmt.setLong(1, userid);
             rs = pstmt.executeQuery();
-            while (rs.next()) {
+            //Get the first result, if one is found.
+            if (rs.next()) {
                 toReturn = new User(rs.getLong("userid"),rs.getString("name"), rs.getString("email"),
                         rs.getString("screenname"), rs.getLong("phone"), (rs.getInt("is_manager") > 0));
             }
         } finally {
-            if (rs != null) {
-                try{
-                    rs.close();
-                } catch (SQLException e) {}
-            }
-            if (pstmt != null) {
-                try{
-                    pstmt.close();
-                } catch (SQLException e) {}
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {}
-            }
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
 
         return toReturn;
