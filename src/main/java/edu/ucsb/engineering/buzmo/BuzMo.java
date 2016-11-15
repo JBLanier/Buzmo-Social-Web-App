@@ -1,6 +1,5 @@
 package edu.ucsb.engineering.buzmo;
 
-import edu.ucsb.engineering.buzmo.api.User;
 import edu.ucsb.engineering.buzmo.config.BuzMoConfiguration;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 import edu.ucsb.engineering.buzmo.resources.HelloResource;
@@ -9,10 +8,15 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.dbcp2.BasicDataSource;
-
-import java.sql.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BuzMo extends Application<BuzMoConfiguration> {
+
+    final static Logger logger = LoggerFactory.getLogger(DBPoolManager.class);
+
+    private BasicDataSource ds = null;
+
     public static void main(String[] args) throws Exception {
         new BuzMo().run(args);
     }
@@ -26,12 +30,16 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
     public void run(BuzMoConfiguration configuration, Environment environment) {
 
+        logger.info("Configuring connection pool...");
         //Setup DB connection pool (BasicDataSource).
-        BasicDataSource ds = new BasicDataSource();
+        ds = new BasicDataSource();
         ds.setDriverClassName("oracle.jdbc.OracleDriver");
         ds.setUrl(configuration.getDbConfig().getEndpoint());
         ds.setUsername(configuration.getDbConfig().getUsername());
         ds.setPassword(configuration.getDbConfig().getPassword());
+        //To not strain the class DB.
+        ds.setMaxIdle(2);
+        ds.setMaxTotal(2);
         //Validation Query and Test on Borrow
         //More needed in a real world system where connections will get stale (timeout) and disconnect
         //after a while.
@@ -46,14 +54,6 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         //Setup DAOs (pass them the BasicDataSource).
         UserDAO userDAO = new UserDAO(ds);
 
-        //TESTING
-        try {
-            User user = userDAO.getUser(1);
-            System.out.printf("Screenname: %s, Phone: %d\n", user.getScreenname(), user.getPhone());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
         //Register resources.
         environment.jersey().register(new HelloResource());
 
@@ -61,5 +61,9 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         //That resource could then store userDAO in a field.
         //Then when a request comes in, the method that handles the request in the resource
         //could make a call to a method of userDAO.
+
+        //Register Lifecycle Managers
+        DBPoolManager poolMan = new DBPoolManager(this.ds);
+        environment.lifecycle().manage(poolMan);
     }
 }
