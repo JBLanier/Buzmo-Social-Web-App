@@ -1,4 +1,4 @@
-package edu.ucsb.engineering.buzmo;
+package edu.ucsb.engineering.buzmo.util;
 
 import io.dropwizard.lifecycle.Managed;
 import org.apache.commons.dbcp2.BasicDataSource;

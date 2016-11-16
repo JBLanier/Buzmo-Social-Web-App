@@ -2,12 +2,18 @@ package edu.ucsb.engineering.buzmo;
 
 import edu.ucsb.engineering.buzmo.config.BuzMoConfiguration;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
+import edu.ucsb.engineering.buzmo.resources.AuthResource;
 import edu.ucsb.engineering.buzmo.resources.HelloResource;
+import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
+import edu.ucsb.engineering.buzmo.util.DBPoolManager;
+import edu.ucsb.engineering.buzmo.auth.SessionManager;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +60,12 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         //Setup DAOs (pass them the BasicDataSource).
         UserDAO userDAO = new UserDAO(ds);
 
+        //Session Manager
+        SessionManager sm = new SessionManager();
+
         //Register resources.
         environment.jersey().register(new HelloResource());
+        environment.jersey().register(new AuthResource(sm));
 
         //We could now pass in userDAO to a resource via that resource's constructor.
         //That resource could then store userDAO in a field.
@@ -65,5 +75,8 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         //Register Lifecycle Managers
         DBPoolManager poolMan = new DBPoolManager(this.ds);
         environment.lifecycle().manage(poolMan);
+
+        environment.jersey().register(new AuthDynamicFeature(new BuzmoAuthFilter(sm)));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
     }
 }

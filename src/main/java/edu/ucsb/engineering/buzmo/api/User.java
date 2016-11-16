@@ -3,7 +3,9 @@ package edu.ucsb.engineering.buzmo.api;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class User {
+import java.security.Principal;
+
+public class User implements Principal {
     private long userid;
     private String name;
     private String email;
@@ -14,7 +16,7 @@ public class User {
     @JsonCreator
     public User(@JsonProperty("userid") long userid, @JsonProperty("name") String name,
                 @JsonProperty("email") String email, @JsonProperty("screenname") String screenname,
-                @JsonProperty("phone") long phone, @JsonProperty("is_manager") boolean is_manager) {
+                @JsonProperty("phone") long phone, @JsonProperty("isManager") boolean is_manager) {
         this.userid = userid;
         this.name = name;
         this.email = email;
@@ -48,8 +50,8 @@ public class User {
         return phone;
     }
 
-    @JsonProperty
-    public boolean is_manager() {
+    @JsonProperty("isManager")
+    public boolean isManager() {
         return is_manager;
     }
 }
