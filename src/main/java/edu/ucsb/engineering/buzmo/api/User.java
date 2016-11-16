@@ -30,8 +30,8 @@ public class User implements Principal {
         return userid;
     }
 
-    @JsonProperty
-    public String getFull_name() {
+    @JsonProperty("full_name")
+    public String getName() {
         return full_name;
     }
 
