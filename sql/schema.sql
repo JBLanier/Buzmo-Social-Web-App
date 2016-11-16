@@ -1,3 +1,6 @@
+/* schema.sql
+ * Builds the schema in the DB.
+ */
 CREATE TABLE users (
   userid NUMBER(15),
   email VARCHAR2(20),
@@ -143,7 +146,7 @@ CREATE TABLE chat_group_messages (
   mid NUMBER(15),
   cgid NUMBER(15) NOT NULL,
   PRIMARY KEY (mid),
-  FOREIGN KEY (mid) REFERENCES messages,
+  FOREIGN KEY (mid) REFERENCES messages ON DELETE CASCADE,
   FOREIGN KEY (cgid) REFERENCES chat_groups ON DELETE CASCADE
 );
 CREATE TABLE friend_requests (
