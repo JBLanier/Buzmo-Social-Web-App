@@ -5,18 +5,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
     private long userid;
-    private String name;
+    private String full_name;
     private String email;
     private String screenname;
     private long phone;
     private boolean is_manager;
 
     @JsonCreator
-    public User(@JsonProperty("userid") long userid, @JsonProperty("name") String name,
+    public User(@JsonProperty("userid") long userid, @JsonProperty("full_name") String full_name,
                 @JsonProperty("email") String email, @JsonProperty("screenname") String screenname,
                 @JsonProperty("phone") long phone, @JsonProperty("is_manager") boolean is_manager) {
         this.userid = userid;
-        this.name = name;
+        this.full_name = full_name;
         this.email = email;
         this.screenname = screenname;
         this.phone = phone;
@@ -29,8 +29,8 @@ public class User {
     }
 
     @JsonProperty
-    public String getName() {
-        return name;
+    public String getFull_name() {
+        return full_name;
     }
 
     @JsonProperty

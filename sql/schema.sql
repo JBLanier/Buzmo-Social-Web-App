@@ -4,7 +4,7 @@
 CREATE TABLE users (
   userid NUMBER(15),
   email VARCHAR2(20),
-  name VARCHAR2(20),
+  full_name VARCHAR2(20),
   passwd VARCHAR2(10),
   phone NUMBER(10),
   screenname VARCHAR2(20),
@@ -110,7 +110,7 @@ CREATE TABLE mc_msg_topics (
 );
 CREATE TABLE chat_groups (
   cgid NUMBER(15),
-  name VARCHAR2(20),
+  group_name VARCHAR2(20),
   duration NUMBER(3),
   owner NUMBER(15) NOT NULL,
   PRIMARY KEY (cgid),

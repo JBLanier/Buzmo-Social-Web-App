@@ -22,13 +22,13 @@ public class UserDAO {
         User toReturn = null;
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT email, name, screename, phone, is_manager " +
+            pstmt = conn.prepareStatement("SELECT email, full_name, screename, phone, is_manager " +
                     "FROM users WHERE userid = ?");
             pstmt.setLong(1, userid);
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
             if (rs.next()) {
-                toReturn = new User(rs.getLong("userid"),rs.getString("name"), rs.getString("email"),
+                toReturn = new User(rs.getLong("userid"),rs.getString("full_name"), rs.getString("email"),
                         rs.getString("screenname"), rs.getLong("phone"), (rs.getInt("is_manager") > 0));
             }
         } finally {
