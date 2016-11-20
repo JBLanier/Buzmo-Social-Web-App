@@ -3,8 +3,8 @@
  */
 CREATE TABLE users (
   userid NUMBER(15),
-  email VARCHAR2(20),
   full_name VARCHAR2(20),
+  email VARCHAR2(20),
   passwd VARCHAR2(10),
   phone NUMBER(10),
   screenname VARCHAR2(20),
