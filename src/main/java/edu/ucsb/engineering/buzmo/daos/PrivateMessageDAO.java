@@ -73,8 +73,7 @@ public class PrivateMessageDAO {
             pstmt.setInt(5, limit);
 
             rs = pstmt.executeQuery();
-            //Get the first result, if one is found.
-            if (rs.next()) {
+            while (rs.next()) {
                 convos.add(new ConversationListItem(rs.getString("screenname"), rs.getLong("userid"),
                         rs.getLong("ts")));
             }
@@ -124,8 +123,7 @@ public class PrivateMessageDAO {
             pstmt.setInt(6, offset);
             pstmt.setInt(7, limit);
             rs = pstmt.executeQuery();
-            //Get the first result, if one is found.
-            if (rs.next()) {
+            while (rs.next()) {
                 convos.add(new ConversationMessage(rs.getString("SCREENNAME"), rs.getLong("USERID"),
                         rs.getString("MSG"), rs.getLong("UTC")));
             }
