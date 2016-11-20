@@ -137,7 +137,7 @@ CREATE TABLE chat_group_invites (
   mid NUMBER(15),
   cgid NUMBER(15) NOT NULL,
   recipient NUMBER(15) NOT NULL,
-  PRIMARY KEY (mid),
+  PRIMARY KEY (cgid,recipient),
   FOREIGN KEY (mid) REFERENCES messages ON DELETE CASCADE,
   FOREIGN KEY (cgid) REFERENCES chat_groups ON DELETE CASCADE,
   FOREIGN KEY (recipient) REFERENCES users(userid) ON DELETE CASCADE

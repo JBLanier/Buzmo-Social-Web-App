@@ -220,6 +220,32 @@ public class ChatGroupsDAO {
         }
     }
 
+    public void finalizeInvite(long cgid, long recipient, boolean accepted) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmt2 = null;
+        try {
+            conn = this.ds.getConnection();
+            //DELETE invite
+            pstmt = conn.prepareStatement("DELETE FROM MESSAGES M WHERE M.MID = (SELECT C.MID FROM CHAT_GROUP_INVITES " +
+                    "C WHERE C.CGID = ? AND C.RECIPIENT = ?)");
+            pstmt.setLong(1, cgid);
+            pstmt.setLong(2, recipient);
+            pstmt.executeUpdate();
+            if (accepted) {
+                //Add recipient to group.
+                pstmt2 = conn.prepareStatement("INSERT INTO CHAT_GROUP_MEMBERS(USERID,CGID) VALUES (?,?)");
+                pstmt2.setLong(1, recipient);
+                pstmt2.setLong(2, cgid);
+                pstmt2.executeUpdate();
+            }
+        } finally {
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
     //create a group and add its owner to it.
     public void createGroup(long userid, String name, long duration) throws SQLException {
         Connection conn = null;
