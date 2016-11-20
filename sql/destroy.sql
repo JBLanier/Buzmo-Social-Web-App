@@ -31,3 +31,4 @@ DROP TABLE friends;
 
 DROP TABLE users;
 DROP SEQUENCE userid_seq;
+
