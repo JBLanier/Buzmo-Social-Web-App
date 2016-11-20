@@ -1,5 +1,6 @@
 package edu.ucsb.engineering.buzmo.daos;
 
+import edu.ucsb.engineering.buzmo.api.ChatGroup;
 import edu.ucsb.engineering.buzmo.api.ConversationListItem;
 import edu.ucsb.engineering.buzmo.api.ConversationMessage;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -154,6 +155,142 @@ public class ChatGroupsDAO {
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
+    //Returns meta data info about the group.
+    public ChatGroup getChatGroup(long cgid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ChatGroup cg = null;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("SELECT * FROM CHAT_GROUPS WHERE CGID = ?");
+            pstmt.setLong(1, cgid);
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                cg = new ChatGroup(rs.getLong("CGID"), rs.getString("GROUP_NAME"), rs.getLong("DURATION"),
+                        rs.getLong("OWNER"));
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return cg;
+    }
+
+    public void sendInvite(long cgid, long sender, long recipient, String msg, long utc) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmt2 = null;
+        ResultSet rs = null;
+        try {
+            conn = this.ds.getConnection();
+            String generatedColumns[] = {"MID"};
+            pstmt = conn.prepareStatement("INSERT INTO MESSAGES(SENDER,MSG,MSG_TIMESTAMP,IS_DELETED) VALUES (?,?,?,?)",
+                    generatedColumns);
+            pstmt.setLong(1, sender);
+            pstmt.setString(2, msg);
+            pstmt.setLong(3, utc);
+            pstmt.setInt(4, 0); //not deleted by default
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                //Insert into private messages.
+                long mid = rs.getLong(1);
+                pstmt2 = conn.prepareStatement("INSERT INTO CHAT_GROUP_INVITES(MID, CGID, RECIPIENT) VALUES (?,?,?)");
+                pstmt2.setLong(1, mid);
+                pstmt2.setLong(2, cgid);
+                pstmt2.setLong(3, recipient);
+                pstmt2.executeUpdate();
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
+    //create a group and add its owner to it.
+    public void createGroup(long userid, String name, long duration) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmt2 = null;
+        ResultSet rs = null;
+        try {
+            conn = this.ds.getConnection();
+            String generatedColumns[] = {"CGID"};
+            pstmt = conn.prepareStatement("INSERT INTO CHAT_GROUPS(NAME,DURATION,OWNER) VALUES (?,?,?)",
+                    generatedColumns);
+            pstmt.setString(1, name);
+            pstmt.setLong(2, duration);
+            pstmt.setLong(3, userid);
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                //Insert into private messages.
+                long cgid = rs.getLong(1);
+                pstmt2 = conn.prepareStatement("INSERT INTO CHAT_GROUP_MEMBERS(CGID, USERID) VALUES (?,?)");
+                pstmt2.setLong(1, cgid);
+                pstmt2.setLong(2, userid);
+                pstmt2.executeUpdate();
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
+    public void updateGroup(long cgid, String name, long duration, long owner) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("UPDATE CHAT_GROUPS C\n" +
+                    "SET C.DURATION = ?, C.GROUP_NAME = ?, C.OWNER = ?\n" +
+                    "WHERE C.CGID = ?");
+            pstmt.setLong(1, duration);
+            pstmt.setString(2, name);
+            pstmt.setLong(3, owner);
+            pstmt.setLong(4, cgid);
+            pstmt.executeUpdate();
+        } finally {
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
+    //Deletes chat group messages, invites, and then the group itself.
+    public void deleteGroup(long cgid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmt2 = null;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("DELETE FROM MESSAGES M WHERE M.MID IN (\n" +
+                            "  SELECT DISTINCT S.MID FROM CHAT_GROUP_MESSAGES S WHERE S.CGID = ?\n" +
+                            "    UNION\n" +
+                            "  SELECT DISTINCT P.MID FROM CHAT_GROUP_INVITES P WHERE P.CGID = ?\n" +
+                            ")");
+            pstmt.setLong(1, cgid);
+            pstmt.setLong(2, cgid);
+            pstmt.executeUpdate();
+            pstmt2 = conn.prepareStatement("DELETE FROM CHAT_GROUPS WHERE CGID = ?");
+            pstmt2.setLong(1, cgid);
+            pstmt2.executeUpdate();
+        } finally {
             try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
             try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
             try { if (conn != null) conn.close(); } catch (Exception e) {}
