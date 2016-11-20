@@ -1,11 +1,10 @@
-
 /* REMOVE ALL RECORDS */
+/* Delete all chat groups. */
+DELETE FROM chat_groups;
 /* Delete all users. */
 DELETE FROM Users;
 /* Delete all topics. */
 DELETE FROM Topics;
-/* Delete all chat groups. */
-DELETE FROM chat_groups;
 
 /* DESTROY SCHEMA */
 
