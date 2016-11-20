@@ -59,8 +59,8 @@ public class ChatGroupsDAO {
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
             if (rs.next()) {
-                convos.add(new ConversationListItem(rs.getString("screenname"), rs.getLong("userid"),
-                        rs.getLong("ts")));
+                convos.add(new ConversationListItem(rs.getString("SCREENNAME"), rs.getLong("USERID"),
+                        rs.getLong("UTC")));
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
