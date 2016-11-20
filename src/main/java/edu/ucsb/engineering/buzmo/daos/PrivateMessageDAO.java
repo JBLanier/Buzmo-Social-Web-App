@@ -140,7 +140,6 @@ public class PrivateMessageDAO {
         Connection conn = null;
         PreparedStatement pstmt = null;
         PreparedStatement pstmt2 = null;
-        ResultSet rs = null;
         try {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("UPDATE MESSAGES M SET M.IS_DELETED = 1\n" +
@@ -156,7 +155,6 @@ public class PrivateMessageDAO {
             pstmt2.setLong(2, userid);
             pstmt2.executeUpdate();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception e) {}
             try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
             try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
             try { if (conn != null) conn.close(); } catch (Exception e) {}
