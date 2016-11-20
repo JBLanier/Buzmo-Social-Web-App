@@ -1,10 +1,12 @@
 package edu.ucsb.engineering.buzmo.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.security.Principal;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements Principal {
     private long userid;
     private String full_name;
