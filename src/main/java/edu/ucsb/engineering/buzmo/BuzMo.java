@@ -8,6 +8,7 @@ import edu.ucsb.engineering.buzmo.resources.AuthResource;
 import edu.ucsb.engineering.buzmo.resources.FriendsResource;
 import edu.ucsb.engineering.buzmo.resources.HelloResource;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
+import edu.ucsb.engineering.buzmo.resources.UserResource;
 import edu.ucsb.engineering.buzmo.util.DBPoolManager;
 import edu.ucsb.engineering.buzmo.auth.SessionManager;
 import io.dropwizard.Application;
@@ -71,6 +72,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         //Register resources.
         environment.jersey().register(new HelloResource());
         environment.jersey().register(new FriendsResource(friendsDAO));
+        environment.jersey().register(new UserResource(userDAO));
         environment.jersey().register(new AuthResource(sm));
 
         //We could now pass in userDAO to a resource via that resource's constructor.

@@ -27,6 +27,8 @@ public class UserResource {
 
         if (userid != null) {
             user = dao.getUser(userid);
+        } else if (email != null) {
+            user = dao.getUser(email);
         }
 
         return Response.ok(user).build();
