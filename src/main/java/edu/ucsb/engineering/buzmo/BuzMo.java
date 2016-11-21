@@ -1,8 +1,11 @@
 package edu.ucsb.engineering.buzmo;
 
+import edu.ucsb.engineering.buzmo.api.FriendRequest;
 import edu.ucsb.engineering.buzmo.config.BuzMoConfiguration;
+import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 import edu.ucsb.engineering.buzmo.resources.AuthResource;
+import edu.ucsb.engineering.buzmo.resources.FriendsResource;
 import edu.ucsb.engineering.buzmo.resources.HelloResource;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
 import edu.ucsb.engineering.buzmo.util.DBPoolManager;
@@ -59,12 +62,15 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
         //Setup DAOs (pass them the BasicDataSource).
         UserDAO userDAO = new UserDAO(ds);
+        FriendsDAO friendsDAO = new FriendsDAO(ds);
 
         //Session Manager
         SessionManager sm = new SessionManager();
 
+
         //Register resources.
         environment.jersey().register(new HelloResource());
+        environment.jersey().register(new FriendsResource(friendsDAO));
         environment.jersey().register(new AuthResource(sm));
 
         //We could now pass in userDAO to a resource via that resource's constructor.
@@ -78,5 +84,6 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
         environment.jersey().register(new AuthDynamicFeature(new BuzmoAuthFilter(sm)));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
+
     }
 }

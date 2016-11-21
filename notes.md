@@ -17,12 +17,13 @@
     FriendsDAO.getRequests(long userid)
     
     POST /friends/request/respond
-    {"mid": 123, "response": "ACCEPT"}
+    ?mid=123&accept=true      (true or false)
     FriendsDAO.acceptRequest(long mid)
     FriendsDAO.declineRequest(long mid)
     
     POST /friends/request/create
-    FriendsDAO.createRequest(long sender_userid, long recipient_userid)
+    FriendRequest Json object:
+    {"mid":41,"recipient":1,"msg":"Let's be friends!","msg_timestamp":1479679336488,"sender":15,"sender_name":"KDTrey5"}
     
     GET /chatgroups/invites
     ChatGroupsDAO.getInvites(long userid)
