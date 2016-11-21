@@ -1,7 +1,7 @@
 package edu.ucsb.engineering.buzmo.daos;
 
 import edu.ucsb.engineering.buzmo.api.ConversationListItem;
-import edu.ucsb.engineering.buzmo.api.ConversationMessage;
+import edu.ucsb.engineering.buzmo.api.Message;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
@@ -85,15 +85,15 @@ public class PrivateMessageDAO {
         return convos;
     }
 
-    public List<ConversationMessage> getConversation(long userid, long other, int limit, int offset) throws SQLException {
+    public List<Message> getConversation(long userid, long other, int limit, int offset) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        List<ConversationMessage> convos = new ArrayList<>();
+        List<Message> convos = new ArrayList<>();
         try {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("SELECT * FROM(\n" +
-                    "    SELECT U.SCREENNAME, U.USERID, M.MSG, M.MSG_TIMESTAMP AS UTC\n" +
+                    "    SELECT M.MID, U.SCREENNAME, U.USERID, M.MSG, M.MSG_TIMESTAMP AS UTC\n" +
                     "    FROM USERS U, MESSAGES M, PRIVATE_MESSAGES P\n" +
                     "    WHERE\n" +
                     "        U.USERID = M.SENDER AND\n" +
@@ -124,8 +124,8 @@ public class PrivateMessageDAO {
             pstmt.setInt(7, limit);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                convos.add(new ConversationMessage(rs.getString("SCREENNAME"), rs.getLong("USERID"),
-                        rs.getString("MSG"), rs.getLong("UTC")));
+                convos.add(new Message(rs.getString("SCREENNAME"), rs.getLong("USERID"),
+                        rs.getString("MSG"), rs.getLong("UTC"), rs.getLong("MID")));
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}

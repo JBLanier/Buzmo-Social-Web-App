@@ -2,7 +2,7 @@ package edu.ucsb.engineering.buzmo.daos;
 
 import edu.ucsb.engineering.buzmo.api.ChatGroup;
 import edu.ucsb.engineering.buzmo.api.ConversationListItem;
-import edu.ucsb.engineering.buzmo.api.ConversationMessage;
+import edu.ucsb.engineering.buzmo.api.Message;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
@@ -72,12 +72,12 @@ public class ChatGroupsDAO {
         return convos;
     }
 
-    public List<ConversationMessage> getConversation(long cgid, int limit, int offset)
+    public List<Message> getConversation(long cgid, int limit, int offset)
             throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        List<ConversationMessage> msgs = new ArrayList<>();
+        List<Message> msgs = new ArrayList<>();
         try {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("SELECT * FROM (\n" +
@@ -85,7 +85,8 @@ public class ChatGroupsDAO {
                     "    U.SCREENNAME,\n" +
                     "    U.USERID,\n" +
                     "    M.MSG_TIMESTAMP AS UTC,\n" +
-                    "    M.MSG\n" +
+                    "    M.MSG,\n" +
+                    "    M.MID\n" +
                     "  FROM CHAT_GROUP_MESSAGES G, USERS U, MESSAGES M\n" +
                     "  WHERE\n" +
                     "    G.CGID = ? AND\n" +
@@ -103,8 +104,8 @@ public class ChatGroupsDAO {
 
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                msgs.add(new ConversationMessage(rs.getString("SCREENNAME"), rs.getLong("USERID"),
-                        rs.getString("MSG"), rs.getLong("UTC")));
+                msgs.add(new Message(rs.getString("SCREENNAME"), rs.getLong("USERID"),
+                        rs.getString("MSG"), rs.getLong("UTC"), rs.getLong("MID")));
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}

@@ -1,27 +1,35 @@
 package edu.ucsb.engineering.buzmo.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 /**
- * For use in group chats and private message conversations.
+ * For use in group chats, private message conversations, and my circle messages.
+ *
+ * This is the object to be returned to the UI.
  */
 
-public class ConversationMessage {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Message {
     //sender
     private String screenname;
     private long userid;
 
     private String msg; //message content
+    private long mid;
     private long utc; //timestamp
 
-    public ConversationMessage() {
+    public Message() {
     }
 
-    public ConversationMessage(String screenname, long userid, String msg, long utc) {
+    public Message(String screenname, long userid, String msg, long utc, long mid) {
         this.screenname = screenname;
         this.userid = userid;
         this.msg = msg;
         this.utc = utc;
+        this.mid = mid;
     }
 
     @JsonProperty
@@ -63,4 +71,15 @@ public class ConversationMessage {
     public void setUtc(long utc) {
         this.utc = utc;
     }
+
+    @JsonProperty
+    public long getMid() {
+        return mid;
+    }
+
+    @JsonProperty
+    public void setMid(long mid) {
+        this.mid = mid;
+    }
+
 }
