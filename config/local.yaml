@@ -1,6 +1,6 @@
 dbConfig:
-  endpoint: "jdbc:oracle:thin:@localhost:1521:xe"
-  username: "dropwizard"
+  endpoint: "jdbc:oracle:thin:@localhost:6000:xe"
+  username: "jb"
   password: "oracle"
 server:
   type: simple

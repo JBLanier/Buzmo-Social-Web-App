@@ -156,6 +156,30 @@ CREATE TABLE friend_requests (
   FOREIGN KEY (mid) REFERENCES messages ON DELETE CASCADE,
   FOREIGN KEY (recipient) REFERENCES users(userid) ON DELETE CASCADE
 );
+CREATE TRIGGER friend_requests_sym_trig
+BEFORE INSERT OR UPDATE
+  ON friend_requests
+FOR EACH ROW
+  DECLARE
+    num NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO num
+    FROM friend_requests F, messages MF, messages MNEW
+    WHERE  MNEW.mid = :NEW.mid AND
+           MF.mid = F.mid AND
+           ((MF.sender = :NEW.recipient AND F.recipient = MNEW.sender) OR
+            (MF.sender = MNEW.sender AND F.recipient = :NEW.recipient) OR
+            (MNEW.sender = :NEW.recipient));
+
+    IF num > 0
+    THEN
+      /*TODO This isnt actually deleting the message from messages, why????*/
+      DELETE FROM MESSAGES M WHERE M.mid = :NEW.mid;
+      RAISE_APPLICATION_ERROR( -20001, 'A symmetric friend request already exists.' );
+    END IF;
+  END;
+/
+
 CREATE TABLE private_messages (
   mid NUMBER(15),
   recipient NUMBER(15) NOT NULL,
