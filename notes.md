@@ -4,11 +4,14 @@
 # Homepage (Sign Up and Login)
 
     POST /auth/signup
-    UserDAO.createUser(String email, String name, String screenname, long phone, String passwd)
+    UserDAO.createUser(User)
     
     POST /auth/login
     UserDAO.getPasswd(String email)
+    
+    Get /user?userid=123
     UserDAO.getUser(long userid)
+    Get /user?email=dude@gmail.com
     UserDAO.getUser(String email)
 
 # Friends
