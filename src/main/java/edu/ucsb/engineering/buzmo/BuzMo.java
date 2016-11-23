@@ -1,8 +1,6 @@
 package edu.ucsb.engineering.buzmo;
 
-import edu.ucsb.engineering.buzmo.api.FriendRequest;
-import edu.ucsb.engineering.buzmo.api.MyCircleMessage;
-import edu.ucsb.engineering.buzmo.api.MyCircleMessageCreationRequest;
+
 import edu.ucsb.engineering.buzmo.config.BuzMoConfiguration;
 import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
 import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
