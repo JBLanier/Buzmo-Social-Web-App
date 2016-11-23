@@ -6,6 +6,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/hello")
@@ -14,9 +16,14 @@ import javax.ws.rs.core.MediaType;
 public class HelloResource {
     @Path("/hi")
     @GET
-    public String sayHello() {
-        return "Hi there!";
+    public String sayHello(@QueryParam("name") String name) {
+        if (name != null) {
+            return String.format("Hi %s!", name);
+        } else {
+            return "Hi there!";
+        }
     }
+
     @Path("/host")
     @GET
     public String sayHost(@Context HttpServletRequest request) {

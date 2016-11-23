@@ -59,6 +59,8 @@ FOR EACH ROW
     FROM dual;
   END;
 /
+
+
 CREATE TABLE user_topics (
   userid NUMBER(15),
   tid NUMBER(15),

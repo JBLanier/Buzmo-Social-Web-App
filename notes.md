@@ -15,6 +15,9 @@
     UserDAO.getUser(long userid)
     Get /user?email=dude@gmail.com
     UserDAO.getUser(String email)
+    
+    Get /user/profile
+    return user based on cookie
 
 # Friends
 
@@ -49,7 +52,7 @@
 
 # MyCircle 
 
-    GET /mycircle/list?offset=0
+    GET /mycircle/list?userid=1&offset=0
     returns mycirle messages directed to user and broadcast by friends
     MyCircleDAO.getUserMessages(long userid, int offset, int count)
     
@@ -64,7 +67,7 @@
     {"msg": "Hello I'm at UCSB", "topics": ["dogs", "bikes"], "public":true, "recipients": []}
     MyCircleDAO.createMessage(String msg, List<String> topics, Boolean public, List<long> userids)
     
-    GET /mycircle/delete
+    POST /mycircle/delete?mid=343
 
 # Messages
 

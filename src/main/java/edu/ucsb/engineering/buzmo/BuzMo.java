@@ -1,9 +1,11 @@
 package edu.ucsb.engineering.buzmo;
 
+
 import edu.ucsb.engineering.buzmo.config.BuzMoConfiguration;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
 import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
 import edu.ucsb.engineering.buzmo.daos.PrivateMessageDAO;
+import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 import edu.ucsb.engineering.buzmo.resources.*;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
@@ -18,6 +20,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class BuzMo extends Application<BuzMoConfiguration> {
 
@@ -64,6 +67,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         FriendsDAO friendsDAO = new FriendsDAO(ds);
         PrivateMessageDAO privateDAO = new PrivateMessageDAO(ds);
         ChatGroupsDAO chatGroupsDAO = new ChatGroupsDAO(ds);
+        MyCircleDAO myCircleDAO = new MyCircleDAO(ds);
 
         //Session Manager
         SessionManager sm = new SessionManager();
@@ -75,6 +79,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         environment.jersey().register(new AuthResource(sm, userDAO));
         environment.jersey().register(new PrivateMessagesResource(privateDAO));
         environment.jersey().register(new ChatGroupsResource(chatGroupsDAO));
+        environment.jersey().register(new MyCircleResource(myCircleDAO));
 
         //We could now pass in userDAO to a resource via that resource's constructor.
         //That resource could then store userDAO in a field.
