@@ -86,7 +86,7 @@ public class UserDAO {
         User toReturn = null;
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT userid, email, full_name, screename, phone, is_manager " +
+            pstmt = conn.prepareStatement("SELECT userid, email, full_name, screenname, phone, is_manager " +
                     "FROM users WHERE EMAIL = ?");
             pstmt.setString(1,email);
             rs = pstmt.executeQuery();
@@ -105,20 +105,22 @@ public class UserDAO {
 
     }
 
-    public String getPasswd(String email) throws SQLException {
+    public User getLoginMatch(String email, String passwd) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        String toReturn = null;
+        User toReturn = null;
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT PASSWD " +
-                    "FROM users WHERE EMAIL = ?");
+            pstmt = conn.prepareStatement("SELECT U.USERID, U.FULL_NAME, U.EMAIL, U.SCREENNAME, U.PHONE, U.IS_MANAGER " +
+                    "FROM USERS U WHERE U.EMAIL = ? AND U.PASSWD = ?");
             pstmt.setString(1,email);
+            pstmt.setString(2,passwd);
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
             if (rs.next()) {
-                toReturn = rs.getString("PASSWD");
+                toReturn = new User(rs.getLong("userid"),rs.getString("full_name"),rs.getString("email"),
+                        rs.getString("screenname"),rs.getLong("phone"),rs.getInt("is_manager") > 0);
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}

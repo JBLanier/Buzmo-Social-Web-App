@@ -1,16 +1,12 @@
 package edu.ucsb.engineering.buzmo.resources;
 
-import edu.ucsb.engineering.buzmo.api.FriendRequest;
 import edu.ucsb.engineering.buzmo.api.User;
-import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
 
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +23,8 @@ public class UserResource {
 
         if (userid != null) {
             user = dao.getUser(userid);
+        } else if (email != null) {
+            user = dao.getUser(email);
         }
 
         return Response.ok(user).build();
