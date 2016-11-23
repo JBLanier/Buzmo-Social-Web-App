@@ -1,6 +1,7 @@
 package edu.ucsb.engineering.buzmo.daos;
 
 import edu.ucsb.engineering.buzmo.api.MyCircleMessage;
+import edu.ucsb.engineering.buzmo.util.Toolbox;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.*;
@@ -188,7 +189,7 @@ public class MyCircleDAO {
                     "    )\n" +
                     "  ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
-                    "    ROWNUM <= ?", getQStr(topics.size())));
+                    "    ROWNUM <= ?", Toolbox.getQStr(topics.size())));
             pstmt.setLong(1, limit);
             for (int i = 0; i < topics.size(); i++) {
                 pstmt.setString(i + 2, topics.get(i));
@@ -213,17 +214,6 @@ public class MyCircleDAO {
         //Fetch topics for messages.
         this.loadTopics(messages);
         return messages;
-    }
-
-    private static String getQStr(int num) {
-        String str = "";
-        for (int i = 0; i < num; i++) {
-            str += "?";
-            if (i != num - 1) {
-                str += ",";
-            }
-        }
-        return str;
     }
 
     public List<MyCircleMessage> searchAtLeastTopics(List<String> topics, long limit) throws SQLException {
@@ -261,7 +251,7 @@ public class MyCircleDAO {
                     "    )\n" +
                     "  ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
-                    "    ROWNUM <= ?", getQStr(topics.size())));
+                    "    ROWNUM <= ?", Toolbox.getQStr(topics.size())));
             pstmt.setLong(1, limit);
             for (int i = 0; i < topics.size(); i++) {
                 pstmt.setString(i + 2, topics.get(i));
