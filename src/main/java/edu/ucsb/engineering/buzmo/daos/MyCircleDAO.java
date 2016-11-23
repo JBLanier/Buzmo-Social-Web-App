@@ -1,5 +1,6 @@
 package edu.ucsb.engineering.buzmo.daos;
 
+import edu.ucsb.engineering.buzmo.api.MC_MSG_Search;
 import edu.ucsb.engineering.buzmo.api.MyCircleMessage;
 import edu.ucsb.engineering.buzmo.api.MyCircleMessageCreationRequest;
 import edu.ucsb.engineering.buzmo.util.Toolbox;
@@ -154,7 +155,8 @@ public class MyCircleDAO {
         }
     }
 
-    public List<MyCircleMessage> searchAllTopics(List<String> topics, long limit) throws SQLException {
+    public List<MyCircleMessage> searchAllTopics(MC_MSG_Search query, long limit) throws SQLException {
+        List<String> topics = query.getTopics();
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -216,7 +218,8 @@ public class MyCircleDAO {
         return messages;
     }
 
-    public List<MyCircleMessage> searchAtLeastTopics(List<String> topics, long limit) throws SQLException {
+    public List<MyCircleMessage> searchAtLeastTopics(MC_MSG_Search query, long limit) throws SQLException {
+        List<String> topics = query.getTopics();
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -349,7 +352,22 @@ public class MyCircleDAO {
         }
     }
 
+    public void markforDeletion(long mid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = this.ds.getConnection();
 
+            pstmt = conn.prepareStatement("UPDATE MESSAGES M SET M.IS_DELETED = 1 WHERE M.MID = ? AND " +
+                    "EXISTS(SELECT * FROM MC_MESSAGES MC WHERE MC.MID = M.MID)");
+            pstmt.setLong(1, mid);
+            pstmt.executeUpdate();
+
+        } finally {
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+        }
+    }
 
 
 }
