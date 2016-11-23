@@ -1,6 +1,7 @@
 package edu.ucsb.engineering.buzmo.daos;
 
 import edu.ucsb.engineering.buzmo.api.MyCircleMessage;
+import edu.ucsb.engineering.buzmo.api.MyCircleMessageCreationRequest;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.*;
@@ -120,6 +121,7 @@ public class MyCircleDAO {
     }
 
     //Assumes that lists have already been initialized (not null).
+    //Attaches related topics to each MyCircleMessageObject
     private void loadTopics(List<MyCircleMessage> messages) throws SQLException {
         Connection conn = null;
         ResultSet rs = null;
@@ -287,5 +289,79 @@ public class MyCircleDAO {
         this.loadTopics(messages);
         return messages;
     }
+
+    public void createMyCircleMessage(MyCircleMessageCreationRequest msg) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmt2 = null;
+        PreparedStatement pstmt3 = null;
+        PreparedStatement pstmt4 = null;
+        PreparedStatement pstmt5 = null;
+        ResultSet rs = null;
+        try {
+            conn = this.ds.getConnection();
+            String generatedColumnsMid[] = {"MID"};
+            pstmt = conn.prepareStatement("INSERT INTO MESSAGES (SENDER,MSG,MSG_TIMESTAMP,IS_DELETED) VALUES (?,?,?,?)",
+                    generatedColumnsMid);
+            pstmt.setLong(1, msg.getUserid());
+            pstmt.setString(2, msg.getMsg());
+            pstmt.setLong(3, msg.getUtc());
+            pstmt.setInt(4, 0); //not deleted by default
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                //Insert into mc_messages.
+                long mid = rs.getLong(1);
+                pstmt2 = conn.prepareStatement("INSERT INTO MC_MESSAGES (MID, IS_PUBLIC, IS_BROADCAST, READ_COUNT) VALUES (?,?,?,?)");
+                pstmt2.setLong(1, mid);
+                pstmt2.setLong(2, msg.isPublic() ? 1 : 0);
+                pstmt2.setLong(3, msg.isBroadcast() ? 1 : 0);
+                pstmt2.setLong(4, 0);
+                pstmt2.executeUpdate();
+
+                //Insert topics
+                pstmt3 = conn.prepareStatement("INSERT /*+ IGNORE_ROW_ON_DUPKEY_INDEX (TOPICS(label)) */ INTO TOPICS (LABEL) VALUES (?)");
+                for (int i = 0; i < msg.getTopics().size(); i++) {
+                    pstmt3.setString(1, msg.getTopics().get(i).toLowerCase());
+                    pstmt3.addBatch();
+                }
+
+                pstmt3.executeBatch();
+
+
+                pstmt4 = conn.prepareStatement("INSERT INTO MC_MSG_TOPICS (MID, TID) SELECT ?, T.TID FROM TOPICS T WHERE T.LABEL = ?");
+                for (int i = 0; i < msg.getTopics().size(); i++) {
+                    pstmt4.setLong(1, mid);
+                    pstmt4.setString(2, msg.getTopics().get(i).toLowerCase());
+                    pstmt4.addBatch();
+                }
+                pstmt4.executeBatch();
+
+
+                //Insert in MC_MSG_RECIPIENTS if the message isn't broadcast
+                if (!msg.isBroadcast()) {
+                    pstmt5 = conn.prepareStatement("INSERT INTO MC_MSG_RECIPIENTS (RECIPIENT, MID) VALUES (?,?)");
+                    for (int i = 0; i < msg.getRecipients().size(); i++) {
+                        pstmt5.setLong(1, msg.getRecipients().get(i));
+                        pstmt5.setLong(2, mid);
+                        pstmt5.addBatch();
+                    }
+                    pstmt5.executeBatch();
+                }
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt3 != null) pstmt3.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt4 != null) pstmt4.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt5 != null) pstmt5.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+        }
+    }
+
+
+
 
 }
