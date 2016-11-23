@@ -12,14 +12,13 @@ public class UserCreationRequest extends User {
     private String passwd;
 
     @JsonCreator
-    public UserCreationRequest(@JsonProperty("userid") long userid, @JsonProperty("full_name") String full_name,
+    public UserCreationRequest(@JsonProperty("full_name") String full_name,
                 @JsonProperty("email") String email, @JsonProperty("screenname") String screenname,
                 @JsonProperty("phone") long phone, @JsonProperty("isManager") boolean is_manager,
                 @JsonProperty("passwd") String passwd) {
-        super(userid, full_name, email, screenname, phone, is_manager);
+        super(-1, full_name, email, screenname, phone, is_manager);
         this.passwd = passwd;
     }
-
 
     @JsonProperty
     public String getPasswd() {

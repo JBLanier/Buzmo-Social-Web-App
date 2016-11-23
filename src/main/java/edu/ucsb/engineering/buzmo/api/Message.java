@@ -21,6 +21,9 @@ public class Message {
     private long mid;
     private long utc; //timestamp
 
+    //only used by my circle messages
+    private List<String> topics;
+
     public Message() {
     }
 
@@ -30,6 +33,15 @@ public class Message {
         this.msg = msg;
         this.utc = utc;
         this.mid = mid;
+    }
+
+    public Message(String screenname, long userid, String msg, long utc, long mid, List<String> topics) {
+        this.screenname = screenname;
+        this.userid = userid;
+        this.msg = msg;
+        this.utc = utc;
+        this.mid = mid;
+        this.topics = topics;
     }
 
     @JsonProperty
@@ -82,4 +94,13 @@ public class Message {
         this.mid = mid;
     }
 
+    @JsonProperty
+    public List<String> getTopics() {
+        return topics;
+    }
+
+    @JsonProperty
+    public void setTopics(List<String> topics) {
+        this.topics = topics;
+    }
 }

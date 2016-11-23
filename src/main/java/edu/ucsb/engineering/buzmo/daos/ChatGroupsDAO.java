@@ -1,5 +1,6 @@
 package edu.ucsb.engineering.buzmo.daos;
 
+import edu.ucsb.engineering.buzmo.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.ChatGroup;
 import edu.ucsb.engineering.buzmo.api.ConversationListItem;
 import edu.ucsb.engineering.buzmo.api.Message;
@@ -221,7 +222,7 @@ public class ChatGroupsDAO {
         }
     }
 
-    public void finalizeInvite(long cgid, long recipient, boolean accepted) throws SQLException {
+    public void respondToInvite(long cgid, long recipient, boolean accepted) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         PreparedStatement pstmt2 = null;
@@ -323,4 +324,5 @@ public class ChatGroupsDAO {
             try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
     }
+
 }
