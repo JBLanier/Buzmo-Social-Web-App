@@ -13,6 +13,9 @@
     UserDAO.getUser(long userid)
     Get /user?email=dude@gmail.com
     UserDAO.getUser(String email)
+    
+    Get /user/profile
+    return user based on cookie
 
 # Friends
 
