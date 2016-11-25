@@ -1,0 +1,110 @@
+.color-primary-0 { color: #5cec88 }	/* Main Primary color */
+.color-primary-1 { color: #05711d; }
+.color-primary-2 { color: #545858 }
+.color-primary-3 { color: #14FFF6 }
+.color-primary-4 { color: #00A09A }
+
+html,body{
+    background-color: #FFFFFF;
+    color: #05711d;
+}
+
+.mainContainer {
+    margin-top: 60px;
+}
+
+/* Navbar */
+/* navbar */
+.navbar-default {
+    background-color: #5cec88;
+    border-style:none;
+    -webkit-box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.5);
+    box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.5);
+}
+/* title */
+.navbar-default .navbar-brand {
+    color: #05711d;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #438852;
+}
+/* link */
+.navbar-default .navbar-nav > li > a {
+    color: #05711d;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: #438852;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #5cec88;
+    background-color: #05711d;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    color: #555;
+    background-color: #D5D5D5;
+}
+/* caret */
+.navbar-default .navbar-nav > .dropdown > a .caret {
+    border-top-color: #777;
+    border-bottom-color: #777;
+}
+.navbar-default .navbar-nav > .dropdown > a:hover .caret,
+.navbar-default .navbar-nav > .dropdown > a:focus .caret {
+    border-top-color: #333;
+    border-bottom-color: #333;
+}
+.navbar-default .navbar-nav > .open > a .caret,
+.navbar-default .navbar-nav > .open > a:hover .caret,
+.navbar-default .navbar-nav > .open > a:focus .caret {
+    border-top-color: #555;
+    border-bottom-color: #555;
+}
+/* mobile version */
+.navbar-default .navbar-toggle {
+    border-color: #DDD;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+    background-color: #DDD;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #CCC;
+}
+@media (max-width: 767px) {
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: #777;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #333;
+    }
+}
+.navbar-nav>li>.dropdown-menu {
+    margin-top: 0;
+    border-radius: 0;
+    background-color: #5cec88;
+    border-style: none;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+    color: #5cec88;
+    background-color: #05711d;
+}
+
+.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
+    text-decoration: none;
+    color: #5cec88;
+    background-color: #05711d;
+}
+
+.panel-default {
+    background-color: #b5e6c4;
+    color: #545858;
+    border-radius: 5px;
+}
