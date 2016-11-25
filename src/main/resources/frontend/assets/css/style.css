@@ -117,6 +117,7 @@ html,body{
     border-radius: 5px;
 }
 
+
 .main-scrollable-content {
     margin-top: 20px;
     padding: 20px;
@@ -135,3 +136,22 @@ html,body{
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+.panel {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.messagePanel .btn-group-justified>.btn-group .btn {
+    width: 100%;
+    border: 2px solid #05711d;
+    background: transparent;
+    color: #05711d;
+}
+
+.messagePanel .btn-group-justified>.btn-group .btn:hover, .messagePanel .btn-group-justified>.btn-group .btn:focus{
+    background-color: #05711d;
+    color:#FFF;
+}
+
