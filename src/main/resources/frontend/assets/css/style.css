@@ -4,6 +4,8 @@
 .color-primary-3 { color: #14FFF6 }
 .color-primary-4 { color: #00A09A }
 
+
+
 html,body{
     background-color: #FFFFFF;
     color: #05711d;
@@ -153,5 +155,11 @@ html,body{
 .messagePanel .btn-group-justified>.btn-group .btn:hover, .messagePanel .btn-group-justified>.btn-group .btn:focus{
     background-color: #05711d;
     color:#FFF;
+}
+
+#current-conversation-name {
+    height: 36px;
+    font-size: 14pt;
+
 }
 
