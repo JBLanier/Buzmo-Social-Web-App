@@ -7,11 +7,19 @@
 html,body{
     background-color: #FFFFFF;
     color: #05711d;
+    height: 100%;
+    overflow-y: hidden;
 }
 
 .mainContainer {
     margin-top: 60px;
 }
+
+.container-fluid {
+    height: 100%;
+    overflow-y: hidden; /*dont show content that exceeds the height */
+}
+
 
 /* Navbar */
 /* navbar */
@@ -107,4 +115,23 @@ html,body{
     background-color: #b5e6c4;
     color: #545858;
     border-radius: 5px;
+}
+
+.main-scrollable-content {
+    margin-top: 20px;
+    padding: 20px;
+    border-top: solid;
+    max-height: 80%;
+}
+
+.full-height {
+    height: 100%;
+    overflow: hidden;
+}
+
+#load-more-button {
+    text-align: center;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
