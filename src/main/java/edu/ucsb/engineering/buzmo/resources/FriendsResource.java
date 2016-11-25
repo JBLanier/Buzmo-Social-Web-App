@@ -48,9 +48,9 @@ public class FriendsResource {
             dao.createRequest(fr, new Date().getTime());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return Response.status(Response.Status.ACCEPTED).build();
+        return Response.status(Response.Status.OK).build();
     }
 
     @Path("/request/respond")
@@ -59,8 +59,8 @@ public class FriendsResource {
         try {
             dao.respondToRequest(mid,accept);
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
-        return Response.status(Response.Status.ACCEPTED).build();
+        return Response.status(Response.Status.OK).build();
     }
 }

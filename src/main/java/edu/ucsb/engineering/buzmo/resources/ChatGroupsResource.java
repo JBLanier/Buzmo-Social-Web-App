@@ -1,16 +1,14 @@
 package edu.ucsb.engineering.buzmo.resources;
 
 import edu.ucsb.engineering.buzmo.MessageInABottle;
-import edu.ucsb.engineering.buzmo.api.ChatGroup;
-import edu.ucsb.engineering.buzmo.api.ConversationListItem;
-import edu.ucsb.engineering.buzmo.api.Message;
-import edu.ucsb.engineering.buzmo.api.User;
+import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
 import java.util.Date;
@@ -47,13 +45,13 @@ public class ChatGroupsResource {
     }
 
     @Path("/conversation/delete")
-    @GET
+    @POST
     public void deleteMessage(@QueryParam("mid") long mid) throws SQLException {
         this.dao.markDeleted(mid);
     }
 
     @Path("/conversation/send")
-    @GET
+    @POST
     public void sendMessage(@Context SecurityContext ctxt, MessageInABottle msg) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         this.dao.sendMessage(user.getUserid(), msg.getRecipient(), (new Date()).getTime(), msg.getMsg());
@@ -62,6 +60,31 @@ public class ChatGroupsResource {
     @GET
     public ChatGroup getChatGroup(@QueryParam("cgid") long cgid) throws SQLException {
         return this.dao.getChatGroup(cgid);
+    }
+
+    @Path("/invite/create")
+    @POST
+    public Response createChatGroupInvite(ChatGroupInvite inv) {
+        try {
+            ///TODO: need to change time to simulation time
+            dao.sendInvite(inv.getCgid(), inv.getSender(), inv.getRecipient(), inv.getMsg(), new Date().getTime());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @Path("/request/respond")
+    @POST
+    public Response respondToInvite(@QueryParam("cgid") long cgid, @QueryParam("userid") long userid,
+                                     @QueryParam("accept") boolean accept) {
+        try {
+            dao.respondToInvite(cgid,userid,accept);
+        } catch (SQLException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+        return Response.status(Response.Status.OK).build();
     }
 
 }
