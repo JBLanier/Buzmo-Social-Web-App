@@ -190,8 +190,18 @@ html,body{
     width: 90%;
     max-width: 250px;
     margin:auto;
-    background-color: #b5e6c4;
+    background-color: #eeeeee;
     border-radius: 5px;
+}
+
+.loginPanel .btn-default {
+    color: #eeeeee;
+    background-color: #333333;
+    border-style: none
+}
+
+.loginPanel .btn-default:active, .loginPanel .btn-default:focus, .loginPanel .btn-default:hover {
+    background-color: #505050;
 }
 
 .loginPanel h1 {

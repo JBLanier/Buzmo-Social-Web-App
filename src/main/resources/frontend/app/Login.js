@@ -1,6 +1,12 @@
 import React from 'react'
+import $ from 'jquery'
 
 export default class extends React.Component {
+    
+    login() {
+        
+    }
+    
     render() {
         return (
             <div className="loginScreen">
