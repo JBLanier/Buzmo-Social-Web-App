@@ -1,7 +1,9 @@
 import React from 'react'
 import Conversation from './Conversation'
 import Message from './Message'
-import TextInput from './TextInput'
+import $ from 'jquery'
+import Store from './Store'
+
 
 export default class extends React.Component {
 
@@ -9,6 +11,9 @@ export default class extends React.Component {
         super();
 
         this.state = {
+
+            //false means we're in groupchat mode
+            pmMode : true,
 
             conversationList: [
                 <Conversation name="Henry FitzGerald" onClick={this.onConversationClicked.bind(this)} id="43"/>,
@@ -24,16 +29,43 @@ export default class extends React.Component {
             loadMoreConversations: false,
             loadMoreMessages: false,
 
-            activeConversation: null,
             currentConversationNameString: "Choose a Conversation to Start",
 
         }
+        this.activeConversation = null;
 
+        new Store().getHost();
+
+        //this.GETallMessagesInConversation(0,9);
     }
 
     setNewActiveConversation(conv) {
         console.log(conv.props.name + ", " + conv.props.id + " is the new active conversation");
+        this.activeConversation = conv;
 
+    }
+
+    GETallMessagesInConversation(offset, otherid) {
+        const store = new store();
+        if (pmMode) {
+            const pmurl = new Store().getHost() + "/api/messages/conversation?offset=" + offset + "&user=" + otherid;
+            $.getJSON( pmurl, function( data ) {
+                var messages = [];
+                $.each(data, function (key, val) {
+                    messages.push(key + " : " + val + "\n");
+                });
+                console.log("RECEIVED: \n" + items);
+            });
+        } else {
+            const cgurl = "/gfdg";
+            $.getJSON( pmurl, function( data ) {
+                var messages = [];
+                $.each(data, function (key, val) {
+                    messages.push(key + " : " + val + "\n");
+                });
+                console.log("RECEIVED: \n" + items);
+            });
+        }
     }
 
     sendMessage(msg_string) {
@@ -42,12 +74,11 @@ export default class extends React.Component {
 
     onConversationClicked(t){
         t.setState({isActive: true});
-        if (this.state.activeConversation == null) {
+        if (this.activeConversation == null) {
             this.setNewActiveConversation(t);
         } else if(this.state.activeConversation != t) {
-            const old = this.state.activeConversation;
+            this.activeConversation.setState({isActive: false});
             this.setNewActiveConversation(t);
-            old.setState({isActive: false});
 
         }
 
