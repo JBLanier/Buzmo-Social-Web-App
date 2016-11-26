@@ -5,7 +5,7 @@ export default class extends React.Component {
     render() {
         return (
             <div>
-                <Navbar></Navbar>
+                <Navbar />
                 {this.props.children}
             </div>
         )

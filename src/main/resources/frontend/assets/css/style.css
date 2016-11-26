@@ -167,6 +167,13 @@ html,body{
     -webkit-transform: translate(-50%, -50%);
 }
 
+.loginScreen{
+    position: fixed;
+    width:100%;
+    height:100%;
+    background-image: url('/assets/img/login_bg.png');
+    background-repeat: repeat;
+}
 .loginPanel {
     width: 90%;
     max-width: 250px;
