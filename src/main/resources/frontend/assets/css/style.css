@@ -13,19 +13,19 @@ html,body{
     overflow-y: hidden;
 }
 
-body::-webkit-scrollbar-track
+::-webkit-scrollbar-track
 {
 
     background-color: transparent;
 }
 
-body::-webkit-scrollbar
+::-webkit-scrollbar
 {
     width: 6px;
-    background-color: #F5F5F5;
+    background-color: transparent;
 }
 
-body::-webkit-scrollbar-thumb
+::-webkit-scrollbar-thumb
 {
     background-color: #000000;
 }
@@ -65,11 +65,17 @@ body::-webkit-scrollbar-thumb
 .navbar-default .navbar-nav > li > a:focus {
     color: #EEEEEE;
 }
+
+.navbar-default .navbar-nav > li .active > a:hover,
+.navbar-default .navbar-nav > li .active > a:focus {
+    color: #333333;
+}
+
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-    color: #EEEEEE;
-    background-color: #333333;
+    color: #333333;
+    background-color: #EEEEEE;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
