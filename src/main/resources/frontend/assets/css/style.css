@@ -185,8 +185,9 @@ html,body{
 }
 
 #scrollable-conversation-content {
-    max-height: 80%;
+    max-height: calc(100vh - 200px);
     border-bottom: solid;
+    height: 80%;
 }
 
 #scrollable-conversations-list {
