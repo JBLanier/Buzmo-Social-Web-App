@@ -1,6 +1,8 @@
 import React from 'react'
 import Conversation from './Conversation'
 import Message from './Message'
+import $ from 'jquery'
+import Store from './Store'
 
 
 export default class extends React.Component {
@@ -9,6 +11,9 @@ export default class extends React.Component {
         super();
 
         this.state = {
+
+            //false means we're in groupchat mode
+            pmMode : true,
 
             conversationList: [
                 <Conversation name="Henry FitzGerald" onClick={this.onConversationClicked.bind(this)} id="43"/>,
@@ -29,6 +34,9 @@ export default class extends React.Component {
         }
         this.activeConversation = null;
 
+        new Store().getHost();
+
+        //this.GETallMessagesInConversation(0,9);
     }
 
     setNewActiveConversation(conv) {
@@ -37,8 +45,27 @@ export default class extends React.Component {
 
     }
 
-    GETallMessagesInConversation() {
-
+    GETallMessagesInConversation(offset, otherid) {
+        const store = new store();
+        if (pmMode) {
+            const pmurl = new Store().getHost() + "/api/messages/conversation?offset=" + offset + "&user=" + otherid;
+            $.getJSON( pmurl, function( data ) {
+                var messages = [];
+                $.each(data, function (key, val) {
+                    messages.push(key + " : " + val + "\n");
+                });
+                console.log("RECEIVED: \n" + items);
+            });
+        } else {
+            const cgurl = "/gfdg";
+            $.getJSON( pmurl, function( data ) {
+                var messages = [];
+                $.each(data, function (key, val) {
+                    messages.push(key + " : " + val + "\n");
+                });
+                console.log("RECEIVED: \n" + items);
+            });
+        }
     }
 
     sendMessage(msg_string) {

@@ -5,7 +5,7 @@
  */
 let instance = null;
 
-class UserDataManager{
+export default class Store {
     constructor() {
         if(!instance){
             instance = this;
@@ -16,6 +16,12 @@ class UserDataManager{
 
     setUserInformation(uid, screenname, email, phone, is_manager) {
         instance.userobject = {uid, screenname, email, phone, is_manager};
+    }
+
+    getHost() {
+        const host =  window.location.hostname + ":" + 8080;
+        console.log("HOST IS : " + host);
+        return host;
     }
 }
 
