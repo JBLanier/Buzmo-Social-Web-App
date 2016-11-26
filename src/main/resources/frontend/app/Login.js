@@ -6,14 +6,17 @@ export default class extends React.Component {
     
     login() {
         console.log('clicked');
-        /*
-        $.post( "http://localhost:8080/api/auth", { email: this.refs.emailText, password: this.refs.passwordText })
+
+        console.log("email: " + this.refs.emailText.value);
+
+        $.post( "http://localhost:8080/api/auth", { email: this.refs.emailText.value, password: this.refs.passwordText.value })
         .done(function( data ) {
             //hashHistory.push('/messages');
             console.log("logged in!!!");
-        }).error(function(err) {
+        })
+        .fail(function(err) {
             alert("Could not login: " + JSON.stringify(err));
-        });*/
+        });
     }
     
     render() {
