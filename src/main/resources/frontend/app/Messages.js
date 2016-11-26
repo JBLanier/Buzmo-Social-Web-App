@@ -1,7 +1,7 @@
 import React from 'react'
 import Conversation from './Conversation'
 import Message from './Message'
-import TextInput from './TextInput'
+
 
 export default class extends React.Component {
 
@@ -24,15 +24,20 @@ export default class extends React.Component {
             loadMoreConversations: false,
             loadMoreMessages: false,
 
-            activeConversation: null,
             currentConversationNameString: "Choose a Conversation to Start",
 
         }
+        this.activeConversation = null;
 
     }
 
     setNewActiveConversation(conv) {
         console.log(conv.props.name + ", " + conv.props.id + " is the new active conversation");
+        this.activeConversation = conv;
+
+    }
+
+    GETallMessagesInConversation() {
 
     }
 
@@ -42,12 +47,11 @@ export default class extends React.Component {
 
     onConversationClicked(t){
         t.setState({isActive: true});
-        if (this.state.activeConversation == null) {
+        if (this.activeConversation == null) {
             this.setNewActiveConversation(t);
         } else if(this.state.activeConversation != t) {
-            const old = this.state.activeConversation;
+            this.activeConversation.setState({isActive: false});
             this.setNewActiveConversation(t);
-            old.setState({isActive: false});
 
         }
 
