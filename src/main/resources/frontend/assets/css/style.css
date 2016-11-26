@@ -1,5 +1,5 @@
-.color-primary-0 { color: #5cec88 }	/* Main Primary color */
-.color-primary-1 { color: #05711d; }
+.color-primary-0 { color: #EEEEEE }	/* Main Primary color */
+.color-primary-1 { color: #333333; }
 .color-primary-2 { color: #545858 }
 .color-primary-3 { color: #14FFF6 }
 .color-primary-4 { color: #00A09A }
@@ -8,9 +8,26 @@
 
 html,body{
     background-color: #FFFFFF;
-    color: #05711d;
+    color: #333333;
     height: 100%;
     overflow-y: hidden;
+}
+
+body::-webkit-scrollbar-track
+{
+
+    background-color: transparent;
+}
+
+body::-webkit-scrollbar
+{
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar-thumb
+{
+    background-color: #000000;
 }
 
 .mainContainer {
@@ -26,7 +43,7 @@ html,body{
 /* Navbar */
 /* navbar */
 .navbar-default {
-    background-color: #5cec88;
+    background-color: #333333;
     border-style:none;
     -webkit-box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.5);
     -moz-box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.5);
@@ -34,25 +51,25 @@ html,body{
 }
 /* title */
 .navbar-default .navbar-brand {
-    color: #05711d;
+    color: #EEEEEE;
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-    color: #438852;
+    color: #EEEEEE;
 }
 /* link */
 .navbar-default .navbar-nav > li > a {
-    color: #05711d;
+    color: #EEEEEE;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-    color: #438852;
+    color: #EEEEEE;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-    color: #5cec88;
-    background-color: #05711d;
+    color: #EEEEEE;
+    background-color: #333333;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
@@ -99,24 +116,24 @@ html,body{
 .navbar-nav>li>.dropdown-menu {
     margin-top: 0;
     border-radius: 0;
-    background-color: #5cec88;
+    background-color: #EEEEEE;
     border-style: none;
 }
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    color: #5cec88;
-    background-color: #05711d;
+    color: #EEEEEE;
+    background-color: #333333;
 }
 
 .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
     text-decoration: none;
-    color: #5cec88;
-    background-color: #05711d;
+    color: #EEEEEE;
+    background-color: #333333;
 }
 
 .panel-default {
-    background-color: #b5e6c4;
+    background-color: transparent;
     color: #545858;
-    border-radius: 5px;
+    border: none;
 }
 
 
@@ -133,6 +150,7 @@ html,body{
 }
 
 .load-more-button {
+    border: solid 1px;
     text-align: center;
     width: 100%;
     margin-top: 5px;
@@ -148,13 +166,13 @@ html,body{
 
 .messagePanel .btn-group-justified>.btn-group .btn {
     width: 100%;
-    border: 2px solid #05711d;
+    border: 2px solid #333333;
     background: transparent;
-    color: #05711d;
+    color: #333333;
 }
 
 .messagePanel .btn-group-justified>.btn-group .btn:hover, .messagePanel .btn-group-justified>.btn-group .btn:focus{
-    background-color: #05711d;
+    background-color: #333333;
     color:#FFF;
 }
 
@@ -200,6 +218,7 @@ html,body{
 
 #scrollable-conversations-list {
     max-height: 87%;
+    border-right: solid;
 }
 
 #scrollable-mycircle-list {
