@@ -1,10 +1,19 @@
 import React from 'react'
 import $ from 'jquery'
+import {hashHistory} from 'react-router'
 
 export default class extends React.Component {
     
     login() {
-        
+        console.log('clicked');
+        /*
+        $.post( "http://localhost:8080/api/auth", { email: this.refs.emailText, password: this.refs.passwordText })
+        .done(function( data ) {
+            //hashHistory.push('/messages');
+            console.log("logged in!!!");
+        }).error(function(err) {
+            alert("Could not login: " + JSON.stringify(err));
+        });*/
     }
     
     render() {
@@ -15,13 +24,13 @@ export default class extends React.Component {
                         <h1>Buzmo</h1>
                         <div className="form-group">
                             <label>Email address</label>
-                            <input type="email" className="form-control" placeholder="Email" />
+                            <input ref="emailText" type="email" className="form-control" placeholder="Email" />
                         </div>
                         <div className="form-group">
                             <label>Password</label>
-                            <input type="password" className="form-control" placeholder="Password" />
+                            <input ref="passwordText" type="password" className="form-control" placeholder="Password" />
                         </div>
-                        <a href="#" className="btn btn-default" style={{width:"100%"}}>Login</a>
+                        <button onClick={this.login.bind(this)} href="#" className="btn btn-default" style={{width:"100%"}}>Login</button>
                     </div>
                 </div>
             </div>

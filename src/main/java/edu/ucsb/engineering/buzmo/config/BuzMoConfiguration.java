@@ -2,7 +2,6 @@ package edu.ucsb.engineering.buzmo.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
-
 import javax.validation.constraints.NotNull;
 
 public class BuzMoConfiguration extends Configuration {

@@ -12,9 +12,7 @@ import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
 import edu.ucsb.engineering.buzmo.util.DBPoolManager;
 import edu.ucsb.engineering.buzmo.auth.SessionManager;
 import io.dropwizard.Application;
-import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -30,13 +28,6 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
     public static void main(String[] args) throws Exception {
         new BuzMo().run(args);
-    }
-
-    @Override
-    public void initialize(Bootstrap<BuzMoConfiguration> bootstrap) {
-        //Serve up static resources for the frontend.
-        //Serves everything in the src/main/resources/frontend folder.
-        bootstrap.addBundle(new AssetsBundle("/frontend", "/", "index.html"));
     }
 
     public void run(BuzMoConfiguration configuration, Environment environment) {
