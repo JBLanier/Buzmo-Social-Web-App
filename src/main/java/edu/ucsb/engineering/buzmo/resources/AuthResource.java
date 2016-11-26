@@ -31,7 +31,7 @@ public class AuthResource {
         if (user != null) {
             String token = this.sm.startSession(user);
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).cookie(new NewCookie(
-                    new Cookie("auth_token", token, null, request.getServerName()))).build();
+                    new Cookie("auth_token", token, null, request.getServerName()))).entity(user).build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.APPLICATION_JSON)
                     .entity("Unauthorized").build();

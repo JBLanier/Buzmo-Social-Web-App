@@ -1,6 +1,5 @@
 import React from 'react'
 import $ from 'jquery'
-import {hashHistory} from 'react-router'
 
 export default class extends React.Component {
     
@@ -9,9 +8,15 @@ export default class extends React.Component {
 
         console.log("email: " + this.refs.emailText.value);
 
-        $.post( "http://localhost:8080/api/auth", { email: this.refs.emailText.value, password: this.refs.passwordText.value })
+        $.ajax({
+            method: "POST",
+            url: "http://localhost:8080/api/auth",
+            data: JSON.stringify({ email: this.refs.emailText.value, password: this.refs.passwordText.value }),
+            contentType: "application/json"
+        })
         .done(function( data ) {
             //hashHistory.push('/messages');
+            this.props.history.
             console.log("logged in!!!");
         })
         .fail(function(err) {
