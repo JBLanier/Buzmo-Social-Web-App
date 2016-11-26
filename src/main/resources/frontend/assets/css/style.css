@@ -132,7 +132,7 @@ html,body{
     overflow: hidden;
 }
 
-#load-more-button {
+.load-more-button {
     text-align: center;
     width: 100%;
     margin-top: 5px;
@@ -185,9 +185,14 @@ html,body{
 }
 
 #scrollable-conversation-content {
-    max-height: 75%;
+    max-height: 80%;
+    border-bottom: solid;
 }
 
 #scrollable-conversations-list {
-    max-height: 90%;
+    max-height: 87%;
+}
+
+#conversation-message-input-box {
+    margin-top: 20px;
 }
