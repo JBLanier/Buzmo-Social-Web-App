@@ -163,3 +163,10 @@ html,body{
 
 }
 
+#scrollable-conversation-content {
+    max-height: 75%;
+}
+
+#scrollable-conversations-list {
+    max-height: 90%;
+}
