@@ -137,6 +137,7 @@ html,body{
     width: 100%;
     margin-top: 5px;
     margin-bottom: 5px;
+
 }
 
 .panel {
@@ -185,14 +186,25 @@ html,body{
 }
 
 #scrollable-conversation-content {
-    max-height: 80%;
+    max-height: calc(100vh - 200px);
     border-bottom: solid;
+    height: 80%;
 }
 
 #scrollable-conversations-list {
     max-height: 87%;
 }
 
+#scrollable-mycircle-list {
+    max-height: calc(100vh - 260px);
+    border-bottom: solid;
+    height: 80%;
+}
+
 #conversation-message-input-box {
+    margin-top: 20px;
+}
+
+#mycircle-input-box {
     margin-top: 20px;
 }

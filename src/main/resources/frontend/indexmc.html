@@ -47,18 +47,25 @@
 <div class="container-fluid mainContainer">
     <div class="row full-height">
         <div class="container full-height">
-            <h3>My Circle</h3>
+            <h3>MyCircle</h3>
             <div class="row">
                 <div class="col-lg-6">
                     <div class="input-group">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">this is default text<span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Matching Any Topics</a></li>
+                                <li><a href="#">Matching All topics</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                        <input type="text" class="form-control" placeholder="Search MyCircle Messages">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button">Go!</button>
                         </span>
-                        <input type="text" class="form-control" placeholder="Search for...">
                     </div><!-- /input-group -->
                 </div><!-- /.col-lg-6 -->
             </div><!-- /.row -->
-            <div class="pre-scrollable main-scrollable-content">
+            <div class="pre-scrollable main-scrollable-content" id="scrollable-mycircle-list">
 
                 <div class="media">
                     <div class="media-left">
@@ -338,6 +345,12 @@
                     </div>
                 </div>
             </div>
+            <div class="input-group" id="mycircle-input-box">
+                <input type="text" class="form-control" placeholder="Type Message...">
+                <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">Send</button>
+                        </span>
+            </div><!-- /input-group -->
         </div>
     </div>
 </div>
