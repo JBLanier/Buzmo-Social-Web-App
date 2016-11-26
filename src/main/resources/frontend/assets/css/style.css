@@ -157,6 +157,27 @@ html,body{
     color:#FFF;
 }
 
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+
+.loginPanel {
+    width: 90%;
+    max-width: 250px;
+    margin:auto;
+    background-color: #b5e6c4;
+    border-radius: 5px;
+}
+
+.loginPanel h1 {
+    text-align: center;
+    margin-top:0;
+}
 #current-conversation-name {
     height: 36px;
     font-size: 14pt;
