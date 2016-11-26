@@ -1,5 +1,5 @@
 dbConfig:
-  endpoint: "jdbc:oracle:thin:@localhost:6000:xe"
+  endpoint: "jdbc:oracle:thin:@jboracle:1521:xe"
   username: "jb"
   password: "oracle"
 server:

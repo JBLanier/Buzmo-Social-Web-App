@@ -34,7 +34,8 @@ export default class extends React.Component {
         }
         this.activeConversation = null;
 
-        new Store().getHost();
+        console.log("USER: ");
+        console.log(new Store().getUser());
 
         //this.GETallMessagesInConversation(0,9);
     }

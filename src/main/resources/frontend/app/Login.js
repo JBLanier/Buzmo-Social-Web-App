@@ -1,5 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
+import { Router, Route, hashHistory, IndexRoute, browserHistory} from 'react-router'
+import Store from './Store'
 
 export default class extends React.Component {
     
@@ -15,9 +17,10 @@ export default class extends React.Component {
             contentType: "application/json"
         })
         .done(function( data ) {
-            //hashHistory.push('/messages');
-            this.props.history.
+            new Store().user = data;
+            hashHistory.push('/messages');
             console.log("logged in!!!");
+
         })
         .fail(function(err) {
             alert("Could not login: " + JSON.stringify(err));

@@ -1,4 +1,4 @@
-
+import { Router, Route, hashHistory, IndexRoute, browserHistory} from 'react-router'
 /*
  * Setting up block level variable to store class state
  * , set's to null by default.
@@ -14,8 +14,29 @@ export default class Store {
         return instance;
     }
 
-    setUserInformation(uid, screenname, email, phone, is_manager) {
-        instance.userobject = {uid, screenname, email, phone, is_manager};
+    getUser() {
+       if (this.user != undefined) {
+           return this.user;
+       } else {
+
+           $.ajax({
+               method: "GET",
+               url: "http://localhost:8080/api/user/profile",
+               data: null,
+               contentType: null
+           })
+               .done(function( data ) {
+                   if(data === undefined) {
+                       hashHistory.push('#')
+                   } else {
+                       this.user = data;
+                       return this.user;
+                   }
+               })
+               .fail(function(err) {
+                   hashHistory.push('#')
+               });
+       }
     }
 
     getHost() {

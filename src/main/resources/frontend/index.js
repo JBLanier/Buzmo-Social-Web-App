@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { Router, Route, hashHistory, IndexRoute } from 'react-router'
+import { Router, Route, hashHistory, IndexRoute, browserHistory} from 'react-router'
 import App from './app/App'
 import InApp from './app/InApp'
 import Login from './app/Login'

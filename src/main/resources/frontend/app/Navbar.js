@@ -1,4 +1,5 @@
 import React from 'react'
+import Store from './Store'
 
 export default class extends React.Component {
 
@@ -53,6 +54,7 @@ export default class extends React.Component {
                     <li className={this.getClassNameActiveFriends()} ><a href="#/friends"><span className="glyphicon glyphicon-user"></span></a></li>
                 </ul>
                 <ul className="nav navbar-nav navbar-right">
+                    <li className="navbar-text">{new Store().getUser().screenname}</li>
                     <li><a href="#"><span className="glyphicon glyphicon-log-out"></span></a></li>
                 </ul>
             </div>{ /* <!-- /.navbar-collapse --> */ }
