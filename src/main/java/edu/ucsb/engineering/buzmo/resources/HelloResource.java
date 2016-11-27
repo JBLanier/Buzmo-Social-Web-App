@@ -21,6 +21,7 @@ public class HelloResource {
             return String.format("Hi %s!", name);
         } else {
             return "Hi there!";
+            
         }
     }
 

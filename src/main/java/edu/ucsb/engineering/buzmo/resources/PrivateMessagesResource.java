@@ -1,6 +1,6 @@
 package edu.ucsb.engineering.buzmo.resources;
 
-import edu.ucsb.engineering.buzmo.MessageInABottle;
+import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.ConversationListItem;
 import edu.ucsb.engineering.buzmo.api.Message;
 import edu.ucsb.engineering.buzmo.api.User;
@@ -56,7 +56,7 @@ public class PrivateMessagesResource {
     }
 
     @Path("/send")
-    @GET
+    @POST
     public void sendMessages(@Context SecurityContext ctxt, MessageInABottle msg) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         //If we want to do pagination, we can do it later.

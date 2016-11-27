@@ -1,8 +1,10 @@
 import React from 'react'
+import MessageList from './MessageList'
+import ConversationList from './ConversationList'
 import Conversation from './Conversation'
-import Message from './Message'
 import $ from 'jquery'
 import Store from './Store'
+import { Router, Route, hashHistory, IndexRoute, browserHistory} from 'react-router'
 
 
 export default class extends React.Component {
@@ -15,76 +17,66 @@ export default class extends React.Component {
             //false means we're in groupchat mode
             pmMode : true,
 
-            conversationList: [
-                <Conversation name="Henry FitzGerald" onClick={this.onConversationClicked.bind(this)} id="43"/>,
-                <Conversation name="Dude Guy" onClick={this.onConversationClicked.bind(this)} id="57"/>],
-
-
-            messageList: [new Message(true, "hard coded message 1 !", "June 13, 2017 23:43:21").render(),
-                new Message(false, "hard coded message 2 !", "June 13, 2017 23:43:21").render(),
-                new Message(true, "hard coded message 3 !", "June 13, 2017 23:43:21").render()],
-
-
-            //If true, load more button is rendered
-            loadMoreConversations: false,
-            loadMoreMessages: false,
-
-            currentConversationNameString: "Choose a Conversation to Start",
-
+            activeConvName:"Choose a Conversation to Start",
+            activeConvId:"0",
+            user: {userid: 0}
         }
-        this.activeConversation = null;
 
-        console.log("USER: ");
-        console.log(new Store().getUser());
-
-        //this.GETallMessagesInConversation(0,9);
     }
+
+
+    componentDidMount() {
+        new Store().getUser(function(user) {
+            this.setState({pmMode: this.state.pmMode,
+                activeConvName: this.state.activeConvName,
+                activeConvId: this.state.activeConvId,
+                user: user});
+        },this);
+    }
+
+
 
     setNewActiveConversation(conv) {
         console.log(conv.props.name + ", " + conv.props.id + " is the new active conversation");
-        this.activeConversation = conv;
-
+        this.setState({
+            pmMode: this.state.pmMode,
+            activeConvName: conv.props.name,
+            activeConvId: conv.props.id,
+            user: this.state.user});
     }
 
-    GETallMessagesInConversation(offset, otherid) {
-        const store = new store();
-        if (pmMode) {
-            const pmurl = new Store().getHost() + "/api/messages/conversation?offset=" + offset + "&user=" + otherid;
-            $.getJSON( pmurl, function( data ) {
-                var messages = [];
-                $.each(data, function (key, val) {
-                    messages.push(key + " : " + val + "\n");
-                });
-                console.log("RECEIVED: \n" + items);
-            });
+    sendMessage(msg_string, recipient) {
+
+        let url = "";
+
+        if (this.state.pmMode) {
+            url = "http://localhost:8080/api/messages/send"
         } else {
-            const cgurl = "/gfdg";
-            $.getJSON( pmurl, function( data ) {
-                var messages = [];
-                $.each(data, function (key, val) {
-                    messages.push(key + " : " + val + "\n");
-                });
-                console.log("RECEIVED: \n" + items);
-            });
-        }
-    }
-
-    sendMessage(msg_string) {
-        console.log("sending message: " + msg_string);
-    }
-
-    onConversationClicked(t){
-        t.setState({isActive: true});
-        if (this.activeConversation == null) {
-            this.setNewActiveConversation(t);
-        } else if(this.state.activeConversation != t) {
-            this.activeConversation.setState({isActive: false});
-            this.setNewActiveConversation(t);
-
+            url = "http://localhost:8080/api/chatgroups/conversation/send"
         }
 
-    }
+            new Store().getAuth(function (auth) {
+                console.log("sending message: " + msg_string);
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    beforeSend: function (request)
+                    {
+                        request.setRequestHeader("auth_token", auth);
+                    },
+                    data: JSON.stringify({msg: msg_string, recipient: recipient}),
+                    contentType: "application/json"
+                })
+                    .done(function () {
+                        console.log("Message sent!");
+                    })
+                    .fail(function (err) {
+                        alert("Could not login: " + JSON.stringify(err));
+                    });
 
+            },this);
+
+    }
 
     onMessageInputChange(e) {
         const input = e.target.value;
@@ -95,35 +87,34 @@ export default class extends React.Component {
 
     onMessageSendButtonClick(){
         if (this.messageInput != "") {
-            this.sendMessage(this.messageInput);
+            this.sendMessage(this.messageInput, this.state.activeConvId);
         }
         this.refs.textInput.value = "";
 
     }
 
-    getloadMoreConversationsButton() {
-        if (this.state.loadMoreConversations) {
-            return (
-                <div className="panel panel-default btn load-more-button">
-                    <div className="panel-body">
-                        Load More
-                    </div>
-                </div>
-            )
+    onPMPressed() {
+        if (!this.state.pmMode) {
+            this.setState({
+                pmMode: true,
+                activeConvName: "Choose a Conversation to Start",
+                activeConvId: 0,
+                user: this.state.user
+            });
         }
     }
 
-    getloadMoreMessagesButton() {
-        if (this.state.loadMoreMessages) {
-            return (
-                <div className="panel panel-default btn load-more-button">
-                    <div className="panel-body">
-                        Load More
-                    </div>
-                </div>
-            )
+    onGCPressed() {
+        if (this.state.pmMode) {
+            this.setState({
+                pmMode: false,
+                activeConvName: "Choose a Conversation to Start",
+                activeConvId: 0,
+                user: this.state.user
+            });
         }
     }
+
 
     render() {
         return (
@@ -135,40 +126,27 @@ export default class extends React.Component {
                                 <div className="panel-body ">
                                     <div className="btn-group btn-group-justified" role="group">
                                         <div className="btn-group" role="group">
-                                            <button className="btn btn-default" id="pm-button">PM</button>
+                                            <button className="btn btn-default" id="pm-button" onClick={this.onPMPressed.bind(this)}>PM</button>
                                         </div>
                                         <div className="btn-group" role="group">
-                                            <button className="btn btn-default" id="gc-button">GC</button>
+                                            <button className="btn btn-default" id="gc-button" onClick={this.onGCPressed.bind(this)}>GC</button>
                                         </div>
                                     </div>
 
-                                    <div className="pre-scrollable main-scrollable-content"id="scrollable-conversations-list">
-                                        <div className="btn-group btn-group-justified" role="group">
-                                            <div className="btn-group" role="group">
-                                                <button className="btn btn-default" id="new-message-button">New Message</button>
-                                            </div>
-                                        </div>
-
-
-                                        {this.state.conversationList}
-
-                                        {this.getloadMoreConversationsButton()}
-
-                                    </div>
+                                    <ConversationList activeConvId={this.state.activeConvId}
+                                                      setNewActiveConversation={this.setNewActiveConversation.bind(this)}
+                                                      pmMode = {this.state.pmMode}
+                                                      sendMessage = {this.sendMessage.bind(this)}/>
                                 </div>
                             </div>
                         </div>
                         <div className="col-sm-9 ">
                             <div className="panel panel-default ">
                                 <div className="panel-body ">
-                                    <div className="text-center" id="current-conversation-name">{this.state.currentConversationNameString}</div>
-                                        <div className="pre-scrollable main-scrollable-content" id="scrollable-conversation-content">
+                                    <div className="text-center" id="current-conversation-name">{this.state.activeConvName}</div>
 
-                                            {this.state.messageList}
+                                        <MessageList activeConvId={this.state.activeConvId} pmMode = {this.state.pmMode} recipient={this.state.user.userid}/>
 
-                                            {this.getloadMoreMessagesButton()}
-
-                                        </div>
                                     </div>
                                     <div className="input-group" id="conversation-message-input-box">
 

@@ -1,14 +1,15 @@
 import React from 'react'
 
+
 export default class extends React.Component {
 
     constructor() {
         super();
-        this.state = {isActive:false};
     }
 
     getStyle() {
-        if (this.state.isActive) {
+        if (this.props.active) {
+            console.log("CONV KNOWS THAT ACTIVE IS: " + this.props.active);
             return {backgroundColor: "#555555", color : "#EEEEEE"};
         } return {};
     }
@@ -18,6 +19,7 @@ export default class extends React.Component {
     }
 
     render() {
+        console.log("RENDER CONV");
         return (
             <div className="panel conversation" onClick={this.onClick.bind(this)} style={this.getStyle()}>
                 <div className="panel-body">

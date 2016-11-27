@@ -7,7 +7,7 @@
     Body: UserCreationRequest
     UserDAO.createUser(User)
     
-    POST /auth/login
+    POST /auth/
     Body: LoginRequest
     UserDAO.getPasswd(String email)
     

@@ -30,8 +30,10 @@ public class AuthResource {
         User user = userDAO.getLoginMatch(login.getEmail(),login.getPassword());
         if (user != null) {
             String token = this.sm.startSession(user);
-            return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).cookie(new NewCookie(
-                    new Cookie("auth_token", token, null, request.getServerName()))).entity(user).build();
+            user.setAuth_token(token);
+            /*return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).cookie(new NewCookie(
+                    new Cookie("auth_token", token, null, request.getServerName()))).entity(user).build();*/
+            return Response.ok(user).build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.APPLICATION_JSON)
                     .entity("Unauthorized").build();

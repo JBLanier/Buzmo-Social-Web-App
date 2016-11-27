@@ -17,9 +17,10 @@ export default class extends React.Component {
             contentType: "application/json"
         })
         .done(function( data ) {
-            new Store().user = data;
+            new Store().setUser(data);
             hashHistory.push('/messages');
-            console.log("logged in!!!");
+            console.log("logged in!!! DATA: ");
+            console.log(data);
 
         })
         .fail(function(err) {

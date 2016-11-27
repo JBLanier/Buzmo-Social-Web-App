@@ -1,4 +1,4 @@
-package edu.ucsb.engineering.buzmo;
+package edu.ucsb.engineering.buzmo.api;
 
 /* Used for posting messages to group chats or private messages */
 

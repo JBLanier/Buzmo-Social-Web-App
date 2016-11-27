@@ -5,7 +5,7 @@ export default class extends React.Component {
 
     constructor() {
         super();
-
+        this.state = {screenname: ""};
     }
 
     getClassNameActiveMyCircle() {
@@ -32,7 +32,17 @@ export default class extends React.Component {
         }
     }
 
+    componentDidMount() {
+        new Store().getUser(function (user) {
+            this.screennameSet = true;
+            this.setState({screenname: user.screenname});
+        }, this);
+
+    }
+
     render() {
+
+
 
         return (
             <nav className="navbar navbar-default navbar-fixed-top">
@@ -54,8 +64,8 @@ export default class extends React.Component {
                     <li className={this.getClassNameActiveFriends()} ><a href="#/friends"><span className="glyphicon glyphicon-user"></span></a></li>
                 </ul>
                 <ul className="nav navbar-nav navbar-right">
-                    <li className="navbar-text">{new Store().getUser().screenname}</li>
-                    <li><a href="#"><span className="glyphicon glyphicon-log-out"></span></a></li>
+                    <li className="navbar-text">{this.state.screenname}</li>
+                    <li><a href="#"><span className="glyphicon glyphicon-log-out" onClick={function() {new Store().flush();}}></span></a></li>
                 </ul>
             </div>{ /* <!-- /.navbar-collapse --> */ }
         </div> { /* <!-- /.container-fluid --> */ }

@@ -15,6 +15,8 @@ public class User implements Principal {
     private long phone;
     private boolean is_manager;
 
+    private String auth_token;
+
     @JsonCreator
     public User(@JsonProperty("userid") long userid, @JsonProperty("full_name") String full_name,
                 @JsonProperty("email") String email, @JsonProperty("screenname") String screenname,
@@ -55,5 +57,14 @@ public class User implements Principal {
     @JsonProperty("isManager")
     public boolean isManager() {
         return is_manager;
+    }
+
+    @JsonProperty
+    public String getAuth_token() {
+        return auth_token;
+    }
+    @JsonProperty
+    public void setAuth_token(String auth_token) {
+        this.auth_token = auth_token;
     }
 }

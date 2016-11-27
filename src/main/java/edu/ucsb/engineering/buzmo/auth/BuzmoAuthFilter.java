@@ -9,6 +9,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
@@ -28,11 +29,14 @@ public class BuzmoAuthFilter extends AuthFilter<String, User> {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         //if credentials invalid
-        Cookie tokenCookie = requestContext.getCookies().getOrDefault("auth_token", null);
-        if (tokenCookie == null) {
+        MultivaluedMap<String, String> headers = requestContext.getHeaders();
+
+        System.out.println("\n\nHeaders: " + headers.toString());
+
+        if (headers.getOrDefault("auth_token", null) == null) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
-        String token = tokenCookie.getValue();
+        String token = headers.getOrDefault("auth_token", null).get(0);
         User user = this.sm.fetchSession(token);
         if (user == null) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);

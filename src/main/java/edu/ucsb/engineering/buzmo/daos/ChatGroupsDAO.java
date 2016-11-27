@@ -1,6 +1,5 @@
 package edu.ucsb.engineering.buzmo.daos;
 
-import edu.ucsb.engineering.buzmo.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.ChatGroup;
 import edu.ucsb.engineering.buzmo.api.ConversationListItem;
 import edu.ucsb.engineering.buzmo.api.Message;
@@ -23,6 +22,55 @@ public class ChatGroupsDAO {
     public ChatGroupsDAO(BasicDataSource ds) {
         this.ds = ds;
     }
+
+//    public List<ConversationListItem> getConversationList(long userid, int limit, int offset) throws SQLException {
+//        Connection conn = null;
+//        PreparedStatement pstmt = null;
+//        ResultSet rs = null;
+//        List<ConversationListItem> convos = new ArrayList<>();
+//        try {
+//            conn = this.ds.getConnection();
+//            pstmt = conn.prepareStatement("SELECT * FROM (\n" +
+//                    "  SELECT D.CGID, D.GROUP_NAME, UTC FROM (\n" +
+//                    "    SELECT\n" +
+//                    "      C.CGID,\n" +
+//                    "      MAX(M.MSG_TIMESTAMP) AS UTC\n" +
+//                    "    FROM CHAT_GROUPS C, CHAT_GROUP_MESSAGES S, MESSAGES M\n" +
+//                    "    WHERE\n" +
+//                    "      C.CGID = S.CGID AND\n" +
+//                    "      S.MID = M.MID AND\n" +
+//                    "      M.IS_DELETED = 0\n" +
+//                    "    GROUP BY C.CGID\n" +
+//                    "  ) F, CHAT_GROUPS D\n" +
+//                    "  WHERE\n" +
+//                    "    F.CGID = D.CGID AND\n" +
+//                    "    F.CGID IN (\n" +
+//                    "      /* chat group ids of groups user is member of */\n" +
+//                    "      SELECT X.CGID FROM CHAT_GROUP_MEMBERS X\n" +
+//                    "      WHERE X.USERID = ?\n" +
+//                    "    )\n" +
+//                    "  ORDER BY UTC DESC\n" +
+//                    ") WHERE\n" +
+//                    "    ROWNUM > ? AND\n" +
+//                    "    ROWNUM <= ? + ?");
+//            pstmt.setLong(1, userid);
+//            pstmt.setInt(2, offset);
+//            pstmt.setInt(3, offset);
+//            pstmt.setInt(4, limit);
+//
+//            rs = pstmt.executeQuery();
+//            //Get the first result, if one is found.
+//            if (rs.next()) {
+//                convos.add(new ConversationListItem(rs.getString("GROUP_NAME"), rs.getLong("CGID"),
+//                        rs.getLong("UTC")));
+//            }
+//        } finally {
+//            try { if (rs != null) rs.close(); } catch (Exception e) {}
+//            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+//            try { if (conn != null) conn.close(); } catch (Exception e) {}
+//        }
+//        return convos;
+//    }
 
     public List<ConversationListItem> getConversationList(long userid, int limit, int offset) throws SQLException {
         Connection conn = null;
@@ -62,7 +110,7 @@ public class ChatGroupsDAO {
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
             if (rs.next()) {
-                convos.add(new ConversationListItem(rs.getString("SCREENNAME"), rs.getLong("USERID"),
+                convos.add(new ConversationListItem(rs.getString("GROUP_NAME"), rs.getLong("CGID"),
                         rs.getLong("UTC")));
             }
         } finally {
@@ -323,6 +371,33 @@ public class ChatGroupsDAO {
             try { if (pstmt2 != null) pstmt2.close(); } catch (Exception e) {}
             try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
+    }
+
+    public boolean checkMembership(long cgid, long userid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ChatGroup cg = null;
+        boolean inGroup = false;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("SELECT * FROM CHAT_GROUP_MEMBERS M " +
+                    "WHERE M.CGID = ? AND " +
+                    "M.USERID = ? ");
+            pstmt.setLong(1, cgid);
+            pstmt.setLong(2, userid);
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+               inGroup = true;
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return false;
     }
 
 }

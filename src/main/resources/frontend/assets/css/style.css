@@ -209,6 +209,7 @@ html,body{
 
 .loginPanel .btn-default:active, .loginPanel .btn-default:focus, .loginPanel .btn-default:hover {
     background-color: #505050;
+    border: none;
 }
 
 .loginPanel h1 {
@@ -260,9 +261,12 @@ html,body{
 
 .message-panel {
     background-color: transparent;
+    border-bottom: none;
     margin-top: 5px;
     margin-bottom: 0px;
     min-height: 52px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
 
 .message-body {
@@ -272,7 +276,6 @@ html,body{
     width: 40%;
     border-radius: 15px;
     color: white;
-    margin-bottom: 0px;
 }
 
 .message-time {

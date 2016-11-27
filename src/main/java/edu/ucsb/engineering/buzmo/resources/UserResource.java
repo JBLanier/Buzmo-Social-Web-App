@@ -30,7 +30,11 @@ public class UserResource {
             user = dao.getUser(email);
         }
 
-        return Response.ok(user).build();
+        if (user != null) {
+            return Response.ok(user).build();
+        } else {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
     }
 
     @Path("/profile")

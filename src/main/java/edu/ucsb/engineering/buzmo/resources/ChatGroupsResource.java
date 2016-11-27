@@ -1,6 +1,6 @@
 package edu.ucsb.engineering.buzmo.resources;
 
-import edu.ucsb.engineering.buzmo.MessageInABottle;
+import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
 
@@ -21,7 +21,7 @@ import java.util.List;
 public class ChatGroupsResource {
 
     private static final int LIST_LIMIT = 100;
-    private static final int CONV_LIMIT = 7;
+    private static final int CONV_LIMIT = 100;
 
     private ChatGroupsDAO dao;
 
@@ -85,6 +85,19 @@ public class ChatGroupsResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
         return Response.status(Response.Status.OK).build();
+    }
+
+    @Path("/checkmembership")
+    @POST
+    public Response checkMembership(@QueryParam("cgid") long cgid, @QueryParam("userid") long userid) throws SQLException {
+
+            boolean result = dao.checkMembership(cgid,userid);
+        if (result) {
+            return Response.status(Response.Status.OK).build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
     }
 
 }
