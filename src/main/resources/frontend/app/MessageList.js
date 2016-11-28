@@ -92,6 +92,7 @@ export default class extends React.Component {
 
         var msgComponents = this.state.messageList.map(function(msg) {
             return <Message msg={msg.msg}
+                                 screenname={msg.screenname}
                                  id={msg.userid}
                                  mid={msg.mid}
                                  time={msg.utc}

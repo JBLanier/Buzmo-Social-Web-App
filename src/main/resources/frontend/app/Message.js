@@ -16,9 +16,18 @@ export default class extends React.Component {
         };
     }
 
+    getScreennameStyle() {
+        return {
+            float: this.props.isFromUser ? "right" : "left",
+        };
+    }
+
     render() {
         return (
-            <div className="message">
+            <div className="message" style={this.getScreennameStyle()}>
+                <div className="row message-screenname">
+                    {this.props.screenname}
+                </div>
                 <div className="row">
                     <div className="panel message-panel">
                         <div className="panel-body message-body" style={this.getMessageStyle()}>
