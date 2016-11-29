@@ -386,8 +386,8 @@ public class ChatGroupsDAO {
                     "M.USERID = ? ");
             pstmt.setLong(1, cgid);
             pstmt.setLong(2, userid);
-            pstmt.executeUpdate();
-            rs = pstmt.getGeneratedKeys();
+            pstmt.executeQuery();
+            rs = pstmt.getResultSet();
             //Get the first result, if one is found.
             if (rs.next()) {
                inGroup = true;
@@ -397,7 +397,33 @@ public class ChatGroupsDAO {
             try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
             try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
-        return false;
+        return inGroup;
+    }
+
+    public boolean checkOwnership(long cgid, long userid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean owner = false;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("SELECT * FROM CHAT_GROUPS C " +
+                    "WHERE C.CGID = ? AND " +
+                    "C.OWNER = ? ");
+            pstmt.setLong(1, cgid);
+            pstmt.setLong(2, userid);
+            pstmt.executeQuery();
+            rs = pstmt.getResultSet();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                owner = true;
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return owner;
     }
 
 }

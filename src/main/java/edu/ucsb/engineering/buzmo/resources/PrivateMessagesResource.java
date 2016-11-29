@@ -48,7 +48,7 @@ public class PrivateMessagesResource {
     }
 
     @Path("/delete")
-    @GET
+    @POST
     public void deleteMessage(@Context SecurityContext ctxt, @QueryParam("mid") long mid) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         //If we want to do pagination, we can do it later.
