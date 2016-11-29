@@ -85,43 +85,49 @@ public class PrivateMessageDAO {
         return convos;
     }
 
-    public List<Message> getConversation(long userid, long other, int limit, int offset) throws SQLException {
+    public List<Message> getConversation(long userid, long other, int limit, Long before) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List<Message> convos = new ArrayList<>();
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT * FROM(\n" +
-                    "    SELECT M.MID, U.SCREENNAME, U.USERID, M.MSG, M.MSG_TIMESTAMP AS UTC\n" +
-                    "    FROM USERS U, MESSAGES M, PRIVATE_MESSAGES P\n" +
-                    "    WHERE\n" +
-                    "        U.USERID = M.SENDER AND\n" +
-                    "        M.MID = P.MID AND\n" +
-                    "        (\n" +
-                    "            (\n" +
-                    "                /* requesting user is the sender */\n" +
-                    "                M.SENDER = ? AND\n" +
-                    "                P.RECIPIENT = ? AND\n" +
-                    "                M.IS_DELETED = 0\n" +
-                    "            ) OR (\n" +
-                    "                /* requesting user is the recipient */\n" +
-                    "                M.SENDER = ? AND\n" +
-                    "                P.RECIPIENT = ? AND\n" +
-                    "                P.DEL_BY_RECIPIENT = 0\n" +
-                    "            )\n" +
-                    "        )\n" +
-                    "    ORDER BY UTC DESC\n" +
-                    ") WHERE\n" +
-                    "    ROWNUM > ? AND\n" +
-                    "    ROWNUM <= ? + ?");
-            pstmt.setLong(1, userid);
-            pstmt.setLong(2, other);
-            pstmt.setLong(3, other);
-            pstmt.setLong(4, userid);
-            pstmt.setInt(5, offset);
-            pstmt.setInt(6, offset);
-            pstmt.setInt(7, limit);
+            pstmt = conn.prepareStatement(
+                "SELECT * FROM (\n" +
+                        "SELECT * FROM (\n" +
+                        "    SELECT M.MID, U.SCREENNAME, U.USERID, M.MSG, M.MSG_TIMESTAMP AS UTC\n" +
+                        "    FROM USERS U, MESSAGES M, PRIVATE_MESSAGES P\n" +
+                        "    WHERE\n" +
+                        "        U.USERID = M.SENDER AND\n" +
+                        "        M.MID = P.MID AND\n" +
+                        "        (\n" +
+                        "            (\n" +
+                        "                /* requesting user is the sender */\n" +
+                        "                M.SENDER = ? AND\n" +
+                        "                P.RECIPIENT = ? AND\n" +
+                        "                M.IS_DELETED = 0\n" +
+                        "            ) OR (\n" +
+                        "                /* requesting user is the recipient */\n" +
+                        "                M.SENDER = ? AND\n" +
+                        "                P.RECIPIENT = ? AND\n" +
+                        "                P.DEL_BY_RECIPIENT = 0\n" +
+                        "            )\n" +
+                        "        ))\n" +
+                        ((before == null) ? "" : "WHERE UTC < ?\n") +
+                        " ORDER BY UTC DESC \n" +
+                ")\n" +
+                "WHERE\n" +
+                "    ROWNUM <= ?\n" +
+                "ORDER BY UTC ASC\n");
+            int i = 1;
+            pstmt.setLong(i++, userid);
+            pstmt.setLong(i++, other);
+            pstmt.setLong(i++, other);
+            pstmt.setLong(i++, userid);
+            if (before != null) {
+                pstmt.setLong(i++, before);
+            }
+            pstmt.setInt(i++, limit);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 convos.add(new Message(rs.getString("SCREENNAME"), rs.getLong("USERID"),

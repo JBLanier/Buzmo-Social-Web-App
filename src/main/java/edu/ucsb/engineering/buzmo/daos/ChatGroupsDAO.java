@@ -121,7 +121,7 @@ public class ChatGroupsDAO {
         return convos;
     }
 
-    public List<Message> getConversation(long cgid, int limit, int offset)
+    public List<Message> getConversation(long cgid, int limit, Long before)
             throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -129,27 +129,33 @@ public class ChatGroupsDAO {
         List<Message> msgs = new ArrayList<>();
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT * FROM (\n" +
-                    "  SELECT\n" +
-                    "    U.SCREENNAME,\n" +
-                    "    U.USERID,\n" +
-                    "    M.MSG_TIMESTAMP AS UTC,\n" +
-                    "    M.MSG,\n" +
-                    "    M.MID\n" +
-                    "  FROM CHAT_GROUP_MESSAGES G, USERS U, MESSAGES M\n" +
-                    "  WHERE\n" +
-                    "    G.CGID = ? AND\n" +
-                    "    G.MID = M.MID AND\n" +
-                    "    M.SENDER = U.USERID AND\n" +
-                    "    M.IS_DELETED = 0\n" +
-                    "  ORDER BY UTC DESC\n" +
-                    ") WHERE\n" +
-                    "    ROWNUM > ? AND\n" +
-                    "    ROWNUM <= ? + ?");
-            pstmt.setLong(1, cgid);
-            pstmt.setInt(2, offset);
-            pstmt.setInt(3, offset);
-            pstmt.setInt(4, limit);
+            pstmt = conn.prepareStatement(
+                "SELECT * FROM (\n" +
+                        "SELECT * FROM (\n" +
+                            "  SELECT\n" +
+                            "    U.SCREENNAME,\n" +
+                            "    U.USERID,\n" +
+                            "    M.MSG_TIMESTAMP AS UTC,\n" +
+                            "    M.MSG,\n" +
+                            "    M.MID\n" +
+                            "  FROM CHAT_GROUP_MESSAGES G, USERS U, MESSAGES M\n" +
+                            "  WHERE\n" +
+                            "    G.CGID = ? AND\n" +
+                            "    G.MID = M.MID AND\n" +
+                            "    M.SENDER = U.USERID AND\n" +
+                            "    M.IS_DELETED = 0)\n" +
+                        ((before == null) ? "" : "WHERE UTC < ?\n") +
+                        " ORDER BY UTC DESC \n" +
+                        ")\n" +
+                    "WHERE\n" +
+                    "    ROWNUM <= ?\n" +
+                    "ORDER BY UTC ASC\n");
+            int i = 1;
+            pstmt.setLong(i++, cgid);
+            if (before != null) {
+                pstmt.setLong(i++, before);
+            }
+            pstmt.setInt(i++, limit);
 
             rs = pstmt.executeQuery();
             while (rs.next()) {

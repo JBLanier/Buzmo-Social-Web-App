@@ -11,6 +11,8 @@ function sortByKeyLowestToHighest(array, key) {
     });
 }
 
+const MESSAGEFETCHLIMIT = 7;
+
 export default class extends React.Component {
 
 
@@ -30,7 +32,7 @@ export default class extends React.Component {
     componentDidMount() {
         console.log("----Mount");
         if (this.props.activeConvId != "0") {
-            this.loadAllMessagesInConversation(this.state.offset, this.props.activeConvId);
+            this.loadMessagesInConversation(this.state.offset, this.props.activeConvId);
         }
 
     }
@@ -64,7 +66,7 @@ export default class extends React.Component {
         },this);
     }
 
-    loadAllMessagesInConversation(offset, otherid) {
+    loadMessagesInConversation(offset, otherid) {
         if(otherid == "0") {
             this.setState({
                 messageList: [],
@@ -77,9 +79,9 @@ export default class extends React.Component {
         let url = "";
 
         if (this.props.pmMode) {
-            url = "http://" + new Store().getHost() + "/api/messages/conversation?offset=" + offset + "&user=" + otherid;
+            url = "http://" + new Store().getHost() + "/api/messages/conversation?user=" + otherid;
         } else {
-            url = "http://" + new Store().getHost() + "/api/chatgroups/conversation?offset=" + offset + "&cgid=" + otherid;
+            url = "http://" + new Store().getHost() + "/api/chatgroups/conversation?cgid=" + otherid;
         }
 
         new Store().getAuth(function (auth) {
@@ -95,7 +97,7 @@ export default class extends React.Component {
             })
                 .done(function( data ) {
                     console.log("RECEIVED Messages: \n");
-                    data = sortByKeyLowestToHighest(data, 'utc');
+                    //data = sortByKeyLowestToHighest(data, 'utc');
                     console.log(data);
                     if (offset > 0) {
                         const oldmsgs = this.state.messageList.slice(0,offset);
@@ -108,7 +110,72 @@ export default class extends React.Component {
                     this.setState({
                         messageList: data,
                         offset: data.length,
-                        loadMoreMessages: false,
+                        loadMoreMessages: data.length >= MESSAGEFETCHLIMIT,
+                        isGroupOwner: this.state.isGroupOwner});
+
+                }.bind(this))
+                .fail(function(err) {
+                    console.log("error retrieving conversations, returning to login screen");
+                    hashHistory.push('#')
+                });
+
+        },this);
+
+
+
+    }
+
+    loadMoreMessagesInConversation() {
+
+        let otherid = this.props.activeConvId;
+
+        if(otherid == "0") {
+            this.setState({
+                messageList: [],
+                offset: 0,
+                loadMoreMessages: false,
+                isGroupOwner: this.state.isGroupOwner
+            })
+        }
+
+        let utc = this.state.messageList[0].utc;
+        let url = "";
+
+        if (this.props.pmMode) {
+            url = "http://" + new Store().getHost() + "/api/messages/conversation?user=" + otherid + "&before=" + utc;
+        } else {
+            url = "http://" + new Store().getHost() + "/api/chatgroups/conversation?cgid=" + otherid + "&before=" + utc;
+        }
+
+        new Store().getAuth(function (auth) {
+            $.ajax({
+                method: "GET",
+                url: url,
+                beforeSend: function (request)
+                {
+                    request.setRequestHeader("auth_token", auth);
+                },
+                data: null,
+                contentType: "application/json"
+            })
+                .done(function( data ) {
+                    console.log("RECEIVED Messages: \n");
+                    //data = sortByKeyLowestToHighest(data, 'utc');
+                    console.log(data);
+
+                    let numRecieved = data.length;
+
+                    const oldmsgs = this.state.messageList;
+                    console.log(oldmsgs);
+                    data = data.concat(oldmsgs);
+                    console.log(data);
+
+                    console.log("DATA:");
+                    console.log(data);
+                    this.setState({
+                        messageList: data,
+                        offset: data.length,
+                        loadMoreMessages: numRecieved >= MESSAGEFETCHLIMIT,
                         isGroupOwner: this.state.isGroupOwner});
 
                 }.bind(this))
@@ -146,7 +213,7 @@ export default class extends React.Component {
     getLoadMoreMessagesButton() {
         if (this.state.loadMoreMessages) {
             return (
-                <div className="panel panel-default btn load-more-button">
+                <div className="panel panel-default btn load-more-button" onClick={this.loadMoreMessagesInConversation.bind(this)}>
                     <div className="panel-body">
                         Load More
                     </div>
@@ -158,14 +225,14 @@ export default class extends React.Component {
     render() {
         if (this.lastRenderedConv != this.props.activeConvId) {
             console.log("CALLING LOAD MESSAGES");
-            this.loadAllMessagesInConversation(0, this.props.activeConvId);
+            this.loadMessagesInConversation(0, this.props.activeConvId);
             if (this.props.pmMode == false) {
                 this.checkGroupOwnerShip();
             }
         }
 
         console.log("RENDER Messages!");
-        // setTimeout(function(){this.loadAllMessagesInConversation(this.state.offset,
+        // setTimeout(function(){this.loadMessagesInConversation(this.state.offset,
         //     this.props.activeConvId);}.bind(this),5000);
 
         return (
@@ -173,9 +240,9 @@ export default class extends React.Component {
 
             <div className="pre-scrollable main-scrollable-content" id="scrollable-conversation-content">
 
-                {this.renderMessages(this.props.activeConvId)}
-
                 {this.getLoadMoreMessagesButton()}
+
+                {this.renderMessages(this.props.activeConvId)}
 
             </div>
         )

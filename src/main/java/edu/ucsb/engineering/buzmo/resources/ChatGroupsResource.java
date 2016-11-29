@@ -21,7 +21,7 @@ import java.util.List;
 public class ChatGroupsResource {
 
     private static final int LIST_LIMIT = 100;
-    private static final int CONV_LIMIT = 100;
+    private static final int CONV_LIMIT = 7;
 
     private ChatGroupsDAO dao;
 
@@ -40,8 +40,8 @@ public class ChatGroupsResource {
     @Path("/conversation")
     @GET
     public List<Message> getConversation(@QueryParam("cgid") long cgid,
-                                         @QueryParam("offset") int offset) throws SQLException {
-        return this.dao.getConversation(cgid, CONV_LIMIT, offset);
+                                         @QueryParam("before") Long before) throws SQLException {
+        return this.dao.getConversation(cgid, CONV_LIMIT, before);
     }
 
     @Path("/conversation/delete")
