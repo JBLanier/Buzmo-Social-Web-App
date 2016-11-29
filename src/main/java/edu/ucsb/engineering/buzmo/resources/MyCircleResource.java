@@ -4,9 +4,12 @@ import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -23,28 +26,43 @@ public class MyCircleResource {
     private static final int MC_SEARCH_LIMIT = 100;
 
     private MyCircleDAO dao;
+    private UserDAO userDAO;
 
-    public MyCircleResource(MyCircleDAO ds) {this.dao = ds;}
+    public MyCircleResource(MyCircleDAO ds, UserDAO userDAO) {this.dao = ds;this.userDAO=userDAO;}
 
     @Path("/list")
+    @PermitAll
     @GET
-    public Response getRequests(@QueryParam("userid") long userid, @QueryParam("offset") int offset) throws SQLException {
+    public Response getRequests(@Context SecurityContext ctxt, @QueryParam("offset") int offset) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
         List<MyCircleMessage> msgs = null;
-        msgs = dao.getMessages(userid,offset,MC_MESSAGE_REQUEST_LIMIT);
+        msgs = dao.getMessages(user.getUserid(),offset,MC_MESSAGE_REQUEST_LIMIT);
         return Response.ok(msgs).build();
     }
 
     @Path("/search/any")
-    @GET
-    public Response searchAny(MC_MSG_Search query) throws SQLException {
+    @PermitAll
+    @POST
+    public Response searchAny(@Context SecurityContext ctxt, MC_MSG_Search query) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
+        //If no topics, use user topics.
+        if (query.getTopics().size() == 0) {
+            query.setTopics(this.userDAO.getTopics(user.getUserid()));
+        }
         List<MyCircleMessage> msgs = null;
         msgs = dao.searchAtLeastTopics(query, MC_SEARCH_LIMIT);
         return Response.ok(msgs).build();
     }
 
     @Path("/search/all")
-    @GET
-    public Response searchALL(MC_MSG_Search query) throws SQLException {
+    @PermitAll
+    @POST
+    public Response searchALL(@Context SecurityContext ctxt, MC_MSG_Search query) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
+        //If no topics, use user topics.
+        if (query.getTopics().size() == 0) {
+            query.setTopics(this.userDAO.getTopics(user.getUserid()));
+        }
         List<MyCircleMessage> msgs = null;
         msgs = dao.searchAllTopics(query, MC_SEARCH_LIMIT);
         return Response.ok(msgs).build();

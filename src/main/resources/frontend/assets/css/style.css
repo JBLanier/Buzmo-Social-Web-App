@@ -288,3 +288,23 @@ html,body{
     margin-bottom: 5px;
 }
 
+.mycircle-message .topics span {
+    margin-right: 5px;
+}
+
+.mycircle-message .topics {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.mycircle-message .time {
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.mycircle-message {
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-bottom:5px;
+}
+

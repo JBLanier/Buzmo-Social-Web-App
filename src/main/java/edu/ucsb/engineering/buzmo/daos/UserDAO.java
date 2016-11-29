@@ -132,6 +132,31 @@ public class UserDAO {
 
     }
 
+    public List<String> getTopics(long userid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<String> toReturn = new ArrayList<>();
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("SELECT T.LABEL FROM USER_TOPICS U, TOPICS T WHERE " +
+                    "U.USERID = ? AND U.TID = T.TID");
+            pstmt.setLong(1,userid);
+            rs = pstmt.executeQuery();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                toReturn.add(rs.getString("LABEL"));
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+
+        return toReturn;
+
+    }
+
     public void createUser(UserCreationRequest user) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;

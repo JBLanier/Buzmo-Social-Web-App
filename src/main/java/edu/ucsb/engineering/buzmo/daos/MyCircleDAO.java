@@ -192,10 +192,11 @@ public class MyCircleDAO {
                     "  ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
                     "    ROWNUM <= ?", Toolbox.getQStr(topics.size())));
-            pstmt.setLong(1, limit);
-            for (int i = 0; i < topics.size(); i++) {
-                pstmt.setString(i + 2, topics.get(i));
+            int i = 1;
+            for (; i <= topics.size(); i++) {
+                pstmt.setString(i, topics.get(i-1));
             }
+            pstmt.setLong(i, limit);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -255,10 +256,11 @@ public class MyCircleDAO {
                     "  ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
                     "    ROWNUM <= ?", Toolbox.getQStr(topics.size())));
-            pstmt.setLong(1, limit);
-            for (int i = 0; i < topics.size(); i++) {
-                pstmt.setString(i + 2, topics.get(i));
+            int i = 1;
+            for (; i <= topics.size(); i++) {
+                pstmt.setString(i, topics.get(i-1));
             }
+            pstmt.setLong(i, limit);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
