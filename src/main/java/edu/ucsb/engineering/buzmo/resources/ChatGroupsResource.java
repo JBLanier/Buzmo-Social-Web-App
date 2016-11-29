@@ -87,11 +87,12 @@ public class ChatGroupsResource {
         return Response.status(Response.Status.OK).build();
     }
 
-    @Path("/checkmembership")
+    @Path("/checkownerhip")
     @POST
-    public Response checkMembership(@QueryParam("cgid") long cgid, @QueryParam("userid") long userid) throws SQLException {
+    public Response checkOwnership(@QueryParam("cgid") long cgid,@Context SecurityContext ctxt) throws SQLException {
 
-            boolean result = dao.checkMembership(cgid,userid);
+        User user = (User) ctxt.getUserPrincipal();
+            boolean result = dao.checkOwnership(cgid,user.getUserid());
         if (result) {
             return Response.status(Response.Status.OK).build();
         } else {

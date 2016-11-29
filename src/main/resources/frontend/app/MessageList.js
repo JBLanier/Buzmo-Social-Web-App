@@ -20,16 +20,48 @@ export default class extends React.Component {
         this.state = {
             messageList: [],
             offset: 0,
-            loadMoreMessages: false
+            loadMoreMessages: false,
+            isGroupOwner: false
         }
         this.lastRenderedConv = 0;
 
     }
 
     componentDidMount() {
+        console.log("----Mount");
         if (this.props.activeConvId != "0") {
             this.loadAllMessagesInConversation(this.state.offset, this.props.activeConvId);
         }
+
+    }
+
+    checkGroupOwnerShip() {
+        new Store().getAuth(function (auth) {
+            console.log("Checking group ownership");
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8080/api/chatgroups/checkownerhip?cgid=" + this.props.activeConvId,
+                beforeSend: function (request)
+                {
+                    request.setRequestHeader("auth_token", auth);
+                },
+                data: null,
+                contentType: null
+            })
+                .done(function () {
+                    console.log("Is owner of chatgroup");
+                    this.setState({
+                        messageList: this.state.messageList,
+                        offset: this.state.offset,
+                        loadMoreMessages: this.state.loadMoreMessages,
+                        isGroupOwner: true
+                    });
+                }.bind(this))
+                .fail(function (err) {
+                    console.log("Did not return as owner of chatgroup");
+                });
+
+        },this);
     }
 
     loadAllMessagesInConversation(offset, otherid) {
@@ -37,7 +69,8 @@ export default class extends React.Component {
             this.setState({
                 messageList: [],
                 offset: 0,
-                loadMoreMessages: false
+                loadMoreMessages: false,
+                isGroupOwner: this.state.isGroupOwner
             })
         }
 
@@ -72,9 +105,11 @@ export default class extends React.Component {
                     }
                     console.log("DATA:");
                     console.log(data);
-                    this.setState({offset: data.length,
+                    this.setState({
+                        messageList: data,
+                        offset: data.length,
                         loadMoreMessages: false,
-                        messageList: data});
+                        isGroupOwner: this.state.isGroupOwner});
 
                 }.bind(this))
                 .fail(function(err) {
@@ -96,7 +131,9 @@ export default class extends React.Component {
                                  id={msg.userid}
                                  mid={msg.mid}
                                  time={msg.utc}
-                                 isFromUser = {this.props.recipient == msg.userid}/>;
+                                 isFromUser = {this.props.recipient == msg.userid}
+                                 pmMode = {this.props.pmMode}
+                                 isGroupOwner = {this.state.isGroupOwner}/>;
         }.bind(this));
 
 
@@ -122,6 +159,9 @@ export default class extends React.Component {
         if (this.lastRenderedConv != this.props.activeConvId) {
             console.log("CALLING LOAD MESSAGES");
             this.loadAllMessagesInConversation(0, this.props.activeConvId);
+            if (this.props.pmMode == false) {
+                this.checkGroupOwnerShip();
+            }
         }
 
         console.log("RENDER Messages!");

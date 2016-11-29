@@ -308,3 +308,9 @@ html,body{
     margin-bottom:5px;
 }
 
+.delete-button {
+    background-color: Transparent;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+}
