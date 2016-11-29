@@ -12,13 +12,13 @@ export default class extends React.Component {
 
     getTimeStyle() {
         return {
-            "text-align": this.props.isFromUser ? "right" : "left"
+            textAlign: this.props.isFromUser ? "right" : "left"
         };
     }
 
     getScreennameStyle() {
         return {
-            "text-align" : this.props.isFromUser ? "right" : "left"
+            textAlign : this.props.isFromUser ? "right" : "left"
         };
     }
 
