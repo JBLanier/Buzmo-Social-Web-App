@@ -1,5 +1,6 @@
 package edu.ucsb.engineering.buzmo.resources;
 
+import com.sun.org.apache.regexp.internal.RE;
 import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
@@ -101,4 +102,52 @@ public class ChatGroupsResource {
 
     }
 
+    @Path("/create")
+    @POST
+    public Response createGroup(ChatGroup chatGroup) {
+        try {
+            dao.createGroup(chatGroup.getOwner(), chatGroup.getName(), chatGroup.getDuration());
+        } catch (SQLException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @Path("/delete")
+    @POST
+    @PermitAll
+    public Response deleteGroup(@Context SecurityContext ctxt, @QueryParam("cgid") long cgid) {
+        User user = (User) ctxt.getUserPrincipal();
+
+            try {
+                if (dao.checkOwnership(cgid,user.getUserid())) {
+                    dao.deleteGroup(cgid);
+                } else {
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
+            } catch (SQLException e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            }
+            return Response.status(Response.Status.OK).build();
+
+    }
+
+    @Path("/update")
+    @POST
+    @PermitAll
+    public Response deleteGroup(@Context SecurityContext ctxt, ChatGroup chatGroup) {
+        User user = (User) ctxt.getUserPrincipal();
+
+        try {
+            if (dao.checkOwnership(chatGroup.getCgid(),user.getUserid())) {
+                dao.updateGroup(chatGroup.getCgid(),chatGroup.getName(),chatGroup.getDuration(),chatGroup.getOwner());
+            } else {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+        } catch (SQLException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+        return Response.status(Response.Status.OK).build();
+
+    }
 }
