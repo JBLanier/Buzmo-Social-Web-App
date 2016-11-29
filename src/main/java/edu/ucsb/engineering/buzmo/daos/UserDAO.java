@@ -160,12 +160,14 @@ public class UserDAO {
     public void createUser(UserCreationRequest user) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        String toReturn = null;
+        String generatedColumnsUserid[] = {"USERID"};
+        ResultSet rs = null;
+        Long userid = null;
         try {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("INSERT INTO USERS (USERID, EMAIL, FULL_NAME, PASSWD, PHONE, " +
                     "SCREENNAME, IS_MANAGER) " +
-                    "VALUES (0,?,?,?,?,?,?)");
+                    "VALUES (0,?,?,?,?,?,?)", generatedColumnsUserid);
             pstmt.setString(1,user.getEmail());
             pstmt.setString(2,user.getName());
             pstmt.setString(3,user.getPasswd());
@@ -173,11 +175,38 @@ public class UserDAO {
             pstmt.setString(5,user.getScreenname());
             pstmt.setInt(6, user.isManager() ? 1 : 0);
             pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()){
+                userid = rs.getLong(1);
+            } else {
+                throw new SQLException("Erroring retrieving new user's id on insert.");
+            }
+            pstmt.close();
+
+            //Insert topics
+            pstmt = conn.prepareStatement("INSERT /*+ IGNORE_ROW_ON_DUPKEY_INDEX (TOPICS(label)) */ INTO TOPICS (LABEL) VALUES (?)");
+            for (int i = 0; i < user.getTopics().size(); i++) {
+                pstmt.setString(1, user.getTopics().get(i).toLowerCase());
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+            pstmt.close();
+
+            //Add topics to user.
+            pstmt = conn.prepareStatement("INSERT INTO USER_TOPICS(USERID, TID) VALUES (?, " +
+                    "(SELECT T.TID FROM TOPICS T WHERE T.LABEL = ?))");
+            for (int i = 0; i < user.getTopics().size(); i++) {
+                pstmt.setLong(1, userid);
+                pstmt.setString(2, user.getTopics().get(i).toLowerCase());
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+
         } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
             try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
             try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
-
     }
 
     public List<User> searchUsers(UserSearch us, int offset, int limit) throws SQLException {

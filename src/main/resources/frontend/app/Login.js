@@ -1,6 +1,6 @@
 import React from 'react'
 import $ from 'jquery'
-import { Router, Route, hashHistory, IndexRoute, browserHistory} from 'react-router'
+import { hashHistory, Link} from 'react-router'
 import Store from './Store'
 
 export default class extends React.Component {
@@ -42,7 +42,8 @@ export default class extends React.Component {
                             <label>Password</label>
                             <input ref="passwordText" type="password" className="form-control" placeholder="Password" />
                         </div>
-                        <button onClick={this.login.bind(this)} href="#" className="btn btn-default" style={{width:"100%"}}>Login</button>
+                        <button onClick={this.login.bind(this)} className="btn btn-default" style={{width:"100%"}}>Login</button>
+                        <p style={{textAlign:"center", marginTop:"10px", marginBottom:"0"}}> <Link to="/signup">Sign me up!</Link></p>
                     </div>
                 </div>
             </div>

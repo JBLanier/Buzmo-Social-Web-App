@@ -314,3 +314,34 @@ html,body{
     cursor: pointer;
     overflow: hidden;
 }
+
+
+.signupPanel {
+    width: 90%;
+    max-width: 450px;
+    margin:auto;
+    margin-top: 50px;
+    background-color: #eeeeee;
+    background-color: #EEEEEE;
+    border-radius: 5px;
+}
+.signupPanel h1 {
+    text-align: center;
+}
+.signupPanel .btn-default {
+    color: #eeeeee;
+    background-color: #333333;
+    border-style: none
+}
+
+.signupPanel .has-success input{
+    background-color: #c4ffc5;
+}
+
+.signupPanel .has-success .form-control {
+    border-color: #8fcc91;
+}
+
+.signupPanel .btn-default:active, .signupPanel .btn-default:focus, .signupPanel .btn-default:hover {
+    background-color: #505050;
+}

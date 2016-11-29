@@ -6,6 +6,7 @@ import InApp from './app/InApp'
 import Login from './app/Login'
 import Messages from './app/Messages'
 import MyCircle from './app/MyCircle'
+import SignUp from './app/SignUp'
 
 render((
     <Router history={hashHistory}>
@@ -15,6 +16,7 @@ render((
                 <Route path="/messages" component={Messages}/>
                 <Route path="/mycircle" component={MyCircle}/>
             </Route>
+            <Route path="/signup" component={SignUp}/>
         </Route>
     </Router>
 ), document.getElementById('app'));
