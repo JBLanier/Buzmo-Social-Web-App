@@ -230,7 +230,7 @@ html,body{
 }
 
 #scrollable-mycircle-list {
-    max-height: calc(100vh - 260px);
+    max-height: calc(100vh - 320px);
     border-bottom: solid;
     height: 80vh;
 }

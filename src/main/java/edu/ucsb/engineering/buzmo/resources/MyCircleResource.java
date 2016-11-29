@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 @Path("/mycircle")
@@ -22,8 +21,8 @@ import java.util.List;
 
 public class MyCircleResource {
 
-    private static final int MC_MESSAGE_REQUEST_LIMIT = 100;
-    private static final int MC_SEARCH_LIMIT = 100;
+    private static final int MC_FETCH_SIZE = 2;
+    private static final int MC_SEARCH_LIMIT = 7;
 
     private MyCircleDAO dao;
     private UserDAO userDAO;
@@ -33,10 +32,10 @@ public class MyCircleResource {
     @Path("/list")
     @PermitAll
     @GET
-    public Response getRequests(@Context SecurityContext ctxt, @QueryParam("offset") int offset) throws SQLException {
+    public Response getRequests(@Context SecurityContext ctxt, @QueryParam("before") Long before) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         List<MyCircleMessage> msgs = null;
-        msgs = dao.getMessages(user.getUserid(),offset,MC_MESSAGE_REQUEST_LIMIT);
+        msgs = dao.getMessages(user.getUserid(),before, MC_FETCH_SIZE);
         return Response.ok(msgs).build();
     }
 
@@ -69,14 +68,17 @@ public class MyCircleResource {
     }
 
     @Path("/create")
+    @PermitAll
     @POST
-    public Response createMessage(MyCircleMessageCreationRequest msg) {
-        try {
-            dao.createMyCircleMessage(msg);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(e.getMessage()).build();
+    public Response createMessage(@Context SecurityContext ctxt, MyCircleMessageCreationRequest msg) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
+        msg.setUserid(user.getUserid());
+
+        if (msg.getTopics() == null || msg.getTopics().size() == 0) {
+            //use the user's topics
+            msg.setTopics(this.userDAO.getTopics(user.getUserid()));
         }
+        dao.createMyCircleMessage(msg);
         return Response.status(Response.Status.ACCEPTED).build();
 
     }

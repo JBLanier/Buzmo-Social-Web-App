@@ -20,7 +20,7 @@ public class MyCircleDAO {
         this.ds = ds;
     }
 
-    public List<MyCircleMessage> getMessages(long userid, long offset, long limit) throws SQLException {
+    public List<MyCircleMessage> getMessages(long userid, Long before, long limit) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -85,19 +85,21 @@ public class MyCircleDAO {
                     "        M.SENDER = ?\n" +
                     "      )\n" +
                     "  )\n" +
+                    ((before == null) ? "" : "WHERE UTC < ?\n") +
                     "  ORDER BY UTC DESC\n" +
                     ")\n" +
                     "WHERE\n" +
-                    "    ROWNUM > ? AND\n" +
-                    "    ROWNUM <= ? + ?");
-            pstmt.setLong(1, userid);
-            pstmt.setLong(2, userid);
-            pstmt.setLong(3, userid);
-            pstmt.setLong(4, userid);
-            pstmt.setLong(5, userid);
-            pstmt.setLong(6, offset);
-            pstmt.setLong(7, offset);
-            pstmt.setLong(8, limit);
+                    "    ROWNUM <= ?\n");
+            int i = 1;
+            pstmt.setLong(i++, userid);
+            pstmt.setLong(i++, userid);
+            pstmt.setLong(i++, userid);
+            pstmt.setLong(i++, userid);
+            pstmt.setLong(i++, userid);
+            if (before != null) {
+                pstmt.setLong(i++, before);
+            }
+            pstmt.setLong(i++, limit);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -126,6 +128,7 @@ public class MyCircleDAO {
         Connection conn = null;
         ResultSet rs = null;
         Statement stmt = null;
+        if (messages == null || messages.size() == 0) return;
         Map<Long, List<String>> topicMap = new HashMap<>();
         try {
             conn = this.ds.getConnection();
@@ -184,10 +187,10 @@ public class MyCircleDAO {
                     "    S.IS_PUBLIC = 1 AND\n" +
                     "    NOT EXISTS (\n" +
                     "      /* Topics we are searching for. */\n" +
-                    "      SELECT T.TID FROM TOPICS T WHERE T.LABEL IN (%s)\n" +
+                    "      SELECT COLUMN_VALUE FROM TABLE(SYS.dbms_debug_vc2coll(%s))\n" +
                     "      MINUS\n" +
                     "      /* Topics for a given message. */\n" +
-                    "      SELECT T.TID FROM TOPICS T, MC_MSG_TOPICS P WHERE T.TID = P.TID AND P.MID = M.MID\n" +
+                    "      SELECT T.LABEL FROM TOPICS T, MC_MSG_TOPICS P WHERE P.MID = M.MID AND T.TID = P.TID\n" +
                     "    )\n" +
                     "  ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
@@ -322,8 +325,8 @@ public class MyCircleDAO {
 
                 pstmt3.executeBatch();
 
-
-                pstmt4 = conn.prepareStatement("INSERT INTO MC_MSG_TOPICS (MID, TID) SELECT ?, T.TID FROM TOPICS T WHERE T.LABEL = ?");
+                pstmt4 = conn.prepareStatement("INSERT INTO MC_MSG_TOPICS(MID, TID) VALUES (?, " +
+                        "(SELECT T.TID FROM TOPICS T WHERE T.LABEL = ?))");
                 for (int i = 0; i < msg.getTopics().size(); i++) {
                     pstmt4.setLong(1, mid);
                     pstmt4.setString(2, msg.getTopics().get(i).toLowerCase());
@@ -331,12 +334,12 @@ public class MyCircleDAO {
                 }
                 pstmt4.executeBatch();
 
-
                 //Insert in MC_MSG_RECIPIENTS if the message isn't broadcast
                 if (!msg.isBroadcast()) {
-                    pstmt5 = conn.prepareStatement("INSERT INTO MC_MSG_RECIPIENTS (RECIPIENT, MID) VALUES (?,?)");
+                    pstmt5 = conn.prepareStatement("INSERT INTO MC_MSG_RECIPIENTS (RECIPIENT, MID) VALUES " +
+                            "((SELECT U.USERID FROM USERS U WHERE U.EMAIL = ?),?)");
                     for (int i = 0; i < msg.getRecipients().size(); i++) {
-                        pstmt5.setLong(1, msg.getRecipients().get(i));
+                        pstmt5.setString(1, msg.getRecipients().get(i));
                         pstmt5.setLong(2, mid);
                         pstmt5.addBatch();
                     }
