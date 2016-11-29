@@ -12,20 +12,20 @@ export default class extends React.Component {
 
     getTimeStyle() {
         return {
-            float: this.props.isFromUser ? "right" : "left",
+            "text-align": this.props.isFromUser ? "right" : "left"
         };
     }
 
     getScreennameStyle() {
         return {
-            float: this.props.isFromUser ? "right" : "left",
+            "text-align" : this.props.isFromUser ? "right" : "left"
         };
     }
 
     render() {
         return (
-            <div className="message" style={this.getScreennameStyle()}>
-                <div className="row message-screenname">
+            <div className="message" >
+                <div className="row message-screenname" style={this.getScreennameStyle()}>
                     {this.props.screenname}
                 </div>
                 <div className="row">
