@@ -111,7 +111,7 @@ public class ChatGroupsDAO {
             //Get the first result, if one is found.
             if (rs.next()) {
                 convos.add(new ConversationListItem(rs.getString("GROUP_NAME"), rs.getLong("CGID"),
-                        rs.getLong("UTC")));
+                        rs.getLong("UTC"),false));
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
@@ -227,8 +227,8 @@ public class ChatGroupsDAO {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("SELECT * FROM CHAT_GROUPS WHERE CGID = ?");
             pstmt.setLong(1, cgid);
-            pstmt.executeUpdate();
-            rs = pstmt.getGeneratedKeys();
+            pstmt.executeQuery();
+            rs = pstmt.getResultSet();
             //Get the first result, if one is found.
             if (rs.next()) {
                 cg = new ChatGroup(rs.getLong("CGID"), rs.getString("GROUP_NAME"), rs.getLong("DURATION"),

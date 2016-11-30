@@ -75,7 +75,7 @@ public class PrivateMessageDAO {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 convos.add(new ConversationListItem(rs.getString("screenname"), rs.getLong("userid"),
-                        rs.getLong("ts")));
+                        rs.getLong("ts"),true));
             }
         } finally {
             try { if (rs != null) rs.close(); } catch (Exception e) {}
