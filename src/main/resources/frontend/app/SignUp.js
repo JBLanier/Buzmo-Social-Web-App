@@ -73,7 +73,8 @@ export default class extends React.Component {
     }
     
     onEmChange(e) {
-        this.setState({email: e.target.value, emValid: (e.target.value.length > 0 && /^[0-9a-zA-Z\-.@]+$/.test(e.target.value))});
+        //Regex from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript/31311899
+        this.setState({email: e.target.value, emValid: (e.target.value.length > 0 && /^(([^<>()[\]{}'^?\\.,!|//#%*-+=&;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(e.target.value))});
     }
     
     fvClass(isValid) {

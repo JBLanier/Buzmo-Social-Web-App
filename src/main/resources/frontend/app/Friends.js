@@ -12,6 +12,7 @@ export default class extends React.Component {
             "friends": [],
             "friendIds": {},
             "requests": [],
+            "invites": [], //group chats
             "email":"",
             "topics": "",
             "n":"",
@@ -145,6 +146,41 @@ export default class extends React.Component {
         });
     }
 
+    respondInvite(cgid, accept) {
+        new Store().getAuth((auth) => {
+            console.log("responding to chat group invite.");
+            $.ajax({
+                method: "POST",
+                url: `http://localhost:8080/api/chatgroups/invite/respond?cgid=${cgid}&accept=${accept}`,
+                beforeSend: function (request) {
+                    request.setRequestHeader("auth_token", auth);
+                }
+            })
+                .done(() => {
+                    if (accept === "true") {
+                        alert('You are now a member!');
+                    } else {
+                        alert('Invite rejected.');
+                    }
+                })
+                .fail(function (err) {
+                    alert("Could not respond to chat group invite: " + JSON.stringify(err));
+                });
+        });
+    }
+
+    getInvites() {
+        return this.state.invites.map((invite,idx) => {
+            return (
+                <li key={idx}>
+                    {invite.groupName} from {invite.invitedBy}
+                    <br />
+                    <button onClick={() => {this.respondInvite(invite.cgid, "true")}} className="btn btn-default btn-xs"><span className="glyphicon glyphicon-ok"></span></button> <button onClick={() => {this.respondInvite(invite.cgid, "false")}} className="btn btn-xs btn-default"><span className="glyphicon glyphicon-remove"></span></button>
+                </li>
+            );
+        });
+    }
+
     loadRequests(){
         new Store().getAuth((auth) => {
             console.log("Getting friend requests for user.");
@@ -189,9 +225,13 @@ export default class extends React.Component {
                         <h3>Friendship Center</h3>
                         <div className="row">
                             <div className="col-sm-3">
-                                <h4>Pending Friend Requests</h4>
+                                <h4>Friend Requests</h4>
                                 <ul>
                                     {this.getRequests()}
+                                </ul>
+                                <h4>GroupChat Invites</h4>
+                                <ul>
+                                    {this.getInvites()}
                                 </ul>
                                 <h4>My Friends</h4>
                                 <ul>

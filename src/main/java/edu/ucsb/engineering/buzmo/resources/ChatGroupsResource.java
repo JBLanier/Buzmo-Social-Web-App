@@ -1,6 +1,5 @@
 package edu.ucsb.engineering.buzmo.resources;
 
-import com.sun.org.apache.regexp.internal.RE;
 import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
@@ -65,29 +64,26 @@ public class ChatGroupsResource {
 
     @Path("/invite/create")
     @POST
-    @PermitAll
-    public Response createChatGroupInvite(@Context SecurityContext ctxt, ChatGroupInvite inv) {
-        try {
-            ///TODO: need to change time to simulation time
-            User user = (User) ctxt.getUserPrincipal();
-            dao.sendInvite(inv.getCgid(), user.getUserid(), inv.getRecipient(), inv.getMsg(), new Date().getTime());
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
+    public Response createChatGroupInvite(ChatGroupInvite inv) throws SQLException {
+        ///TODO: need to change time to simulation time
+        dao.sendInvite(inv.getCgid(), inv.getSender(), inv.getRecipient(), inv.getMsg(), new Date().getTime());
         return Response.status(Response.Status.OK).build();
     }
 
-    @Path("/request/respond")
+    @Path("/invite/respond")
     @POST
-    public Response respondToInvite(@QueryParam("cgid") long cgid, @QueryParam("userid") long userid,
-                                     @QueryParam("accept") boolean accept) {
-        try {
-            dao.respondToInvite(cgid,userid,accept);
-        } catch (SQLException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
+    public Response respondToInvite(@Context SecurityContext ctxt, @QueryParam("cgid") long cgid,
+                                     @QueryParam("accept") boolean accept) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
+        dao.respondToInvite(cgid,user.getUserid(),accept);
         return Response.status(Response.Status.OK).build();
+    }
+
+    @Path("/invite/list")
+    @GET
+    public List<ChatGroupInviteResponse> listInvites(@Context SecurityContext ctxt) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
+        return this.dao.listInvites(user.getUserid());
     }
 
     @Path("/checkownerhip")
