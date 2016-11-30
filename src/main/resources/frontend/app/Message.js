@@ -4,6 +4,57 @@ import $ from 'jquery'
 
 export default class extends React.Component {
 
+    constructor() {
+        super();
+
+        this.state = {isGroupOwner: false};
+        this.lastCheckedConv = 0;
+        this.lastCheckedPMMode = true;
+    }
+
+    componentDidMount() {
+        this._mounted = true;
+    }
+
+    componentWillUnmount() {
+        this._mounted = false;
+    }
+
+    checkGroupOwnerShip() {
+
+
+        new Store().getAuth(function (auth) {
+            console.log("Checking group ownership");
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8080/api/chatgroups/checkownerhip?cgid=" + this.props.activeConvId,
+                beforeSend: function (request) {
+                    request.setRequestHeader("auth_token", auth);
+                },
+                data: null,
+                contentType: null
+            })
+                .done(function () {
+                    console.log("Is owner of chatgroup");
+                    if (this._mounted) {
+                        this.setState({
+                            isGroupOwner: true
+                        });
+                    }
+                }.bind(this))
+                .fail(function (err) {
+                    console.log("Did not return as owner of chatgroup");
+                    if (this._mounted) {
+                        this.setState({
+                            isGroupOwner: false
+                        });
+                    }
+                }.bind(this));
+
+        }, this);
+
+    }
+
     getMessageStyle() {
         return {
             float: this.props.isFromUser ? "right" : "left",
@@ -63,7 +114,7 @@ export default class extends React.Component {
     }
 
     renderDeleteButton(){
-        if (this.props.pmMode || this.props.isGroupOwner) {
+        if (this.props.pmMode || this.state.isGroupOwner) {
             return (
                 <button className="delete-button" onClick={this.deleteMessage.bind(this)}><span
                     className="glyphicon glyphicon-remove-circle"/></button>
@@ -72,6 +123,14 @@ export default class extends React.Component {
     }
 
     render() {
+        if (this.lastCheckedConv != this.props.activeConvId || this.lastCheckedPMMode != this.props.pmMode) {
+            this.lastCheckedConv = this.props.activeConvId;
+            this.lastCheckedPMMode = this.props.pmMode;
+            if (this.props.pmMode == false) {
+                this.checkGroupOwnerShip();
+            }
+        }
+
         return (
             <div className="message" >
                 <div className="row message-screenname" style={this.getScreennameStyle()}>
