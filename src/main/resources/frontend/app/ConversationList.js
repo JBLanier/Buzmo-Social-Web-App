@@ -111,7 +111,7 @@ export default class extends React.Component {
             return (
                 <div className="btn-group btn-group-justified" role="group">
                     <div className="btn-group" role="group">
-                        <button className="btn btn-default" id="new-message-button"
+                        <button className="btn btn-default" id="new-group-button"
                         onClick={this.createNewGroup}>Create New Group</button>
                     </div>
                 </div>
