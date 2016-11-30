@@ -17,7 +17,7 @@ public class TimeResource {
     }
 
     @Path("/set")
-    @GET
+    @POST
     public void setTime(@QueryParam("utc") long utc) {
         this.tk.setTime(utc);
     }

@@ -9,6 +9,7 @@ import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 import edu.ucsb.engineering.buzmo.resources.*;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
+import edu.ucsb.engineering.buzmo.util.CleanupTask;
 import edu.ucsb.engineering.buzmo.util.DBPoolManager;
 import edu.ucsb.engineering.buzmo.auth.SessionManager;
 import edu.ucsb.engineering.buzmo.util.TimeKeeper;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
+import java.util.Timer;
 
 
 public class BuzMo extends Application<BuzMoConfiguration> {
@@ -81,6 +83,10 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
         //Session Manager
         SessionManager sm = new SessionManager();
+
+        //Chat Group Message Cleanup Task
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new CleanupTask(tk, chatGroupsDAO), 0, 10000); //10 second interval
 
         //Register resources.
         environment.jersey().register(new HelloResource());
