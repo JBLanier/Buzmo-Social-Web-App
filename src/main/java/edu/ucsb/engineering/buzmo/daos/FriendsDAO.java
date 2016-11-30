@@ -85,7 +85,36 @@ public class FriendsDAO {
 
     }
 
-    public void createRequest(FriendRequest fr, long utc) throws SQLException {
+    public boolean alreadyRequest(FriendRequest fr) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean already = true;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("SELECT COUNT(*) FROM MESSAGES M, FRIEND_REQUESTS R WHERE " +
+                    "M.MID = R.MID AND ((M.SENDER = ? AND R.RECIPIENT = ?) OR (M.SENDER = ? AND R.RECIPIENT = ?))");
+            pstmt.setLong(1, fr.getSender());
+            pstmt.setLong(2, fr.getRecipient());
+            pstmt.setLong(3, fr.getRecipient());
+            pstmt.setLong(4, fr.getSender());
+            rs = pstmt.executeQuery();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                //Insert into private messages.
+                long count = rs.getLong(1);
+                if (count == 0) already = false;
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+        }
+        return already;
+    }
+
+    public void createRequest(FriendRequest fr) throws SQLException, AlreadyRequest {
+        if (this.alreadyRequest(fr)) throw new AlreadyRequest();
         Connection conn = null;
         PreparedStatement pstmt = null;
         PreparedStatement pstmt2 = null;
@@ -97,7 +126,7 @@ public class FriendsDAO {
                     generatedColumns);
             pstmt.setLong(1, fr.getSender());
             pstmt.setString(2, fr.getMsg());
-            pstmt.setLong(3, utc);
+            pstmt.setLong(3, fr.getMsg_timestamp());
             pstmt.setInt(4, 0); //not deleted by default
             pstmt.executeUpdate();
             rs = pstmt.getGeneratedKeys();

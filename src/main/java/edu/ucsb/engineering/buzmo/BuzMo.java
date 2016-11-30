@@ -81,7 +81,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
         //Register resources.
         environment.jersey().register(new HelloResource());
-        environment.jersey().register(new FriendsResource(friendsDAO));
+        environment.jersey().register(new FriendsResource(friendsDAO, userDAO));
         environment.jersey().register(new UserResource(userDAO));
         environment.jersey().register(new AuthResource(sm, userDAO));
         environment.jersey().register(new PrivateMessagesResource(privateDAO));
