@@ -26,6 +26,7 @@ export default class extends React.Component {
             isGroupOwner: false
         }
         this.lastRenderedConv = 0;
+        this.lastCheckedPMode = false;
 
     }
 
@@ -61,6 +62,12 @@ export default class extends React.Component {
                 }.bind(this))
                 .fail(function (err) {
                     console.log("Did not return as owner of chatgroup");
+                    this.setState({
+                        messageList: this.state.messageList,
+                        offset: this.state.offset,
+                        loadMoreMessages: this.state.loadMoreMessages,
+                        isGroupOwner: false
+                    });
                 });
 
         },this);
@@ -198,9 +205,10 @@ export default class extends React.Component {
                                  id={msg.userid}
                                  mid={msg.mid}
                                  time={msg.utc}
+                                 activeConvId = {this.props.activeConvId}
                                  isFromUser = {this.props.recipient == msg.userid}
                                  pmMode = {this.props.pmMode}
-                                 isGroupOwner = {this.state.isGroupOwner}/>;
+                                 />;
         }.bind(this));
 
 
@@ -223,12 +231,10 @@ export default class extends React.Component {
     }
 
     render() {
-        if (this.lastRenderedConv != this.props.activeConvId) {
+        if (this.lastRenderedConv != this.props.activeConvId || this.lastCheckedPMode != this.props.pmMode) {
             console.log("CALLING LOAD MESSAGES");
             this.loadMessagesInConversation(0, this.props.activeConvId);
-            if (this.props.pmMode == false) {
-                this.checkGroupOwnerShip();
-            }
+            this.lastCheckedPMode = this.props.pmMode;
         }
 
         console.log("RENDER Messages!");

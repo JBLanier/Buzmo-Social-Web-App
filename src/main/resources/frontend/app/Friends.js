@@ -200,9 +200,31 @@ export default class extends React.Component {
                 });
         });
     }
+
+    loadInvites(){
+        new Store().getAuth((auth) => {
+            console.log("Getting group chat invites for user.");
+            $.ajax({
+                method: "GET",
+                url: "http://localhost:8080/api/chatgroups/invite/list",
+                beforeSend: function (request) {
+                    request.setRequestHeader("auth_token", auth);
+                }
+            })
+                .done((invites) => {
+                    console.log("Results obtained!");
+                    this.setState({invites});
+                })
+                .fail(function (err) {
+                    console.log("Could not load group invites: " + JSON.stringify(err));
+                });
+        });
+    }
+
     componentDidMount() {
         this.loadList();
         this.loadRequests();
+        this.loadInvites();
     }
     
     onEmailChange(e){

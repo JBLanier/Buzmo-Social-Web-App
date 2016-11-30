@@ -457,8 +457,8 @@ public class ChatGroupsDAO {
         List<ChatGroupInviteResponse> toReturn = new ArrayList<>();
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT I.CGID, M.MSG_TIMESTAMP, S.SCREENNAME, C.GROUP_NAME" +
-                    "FROM CHAT_GROUP_INVITES I, MESSAGES M, USERS S, CHAT_GROUPS C" +
+            pstmt = conn.prepareStatement("SELECT I.CGID, M.MSG_TIMESTAMP, S.SCREENNAME, C.GROUP_NAME " +
+                    "FROM CHAT_GROUP_INVITES I, MESSAGES M, USERS S, CHAT_GROUPS C " +
                     "WHERE " +
                     "I.MID = M.MID AND M.SENDER = S.USERID AND C.CGID = I.CGID " +
                     "AND I.RECIPIENT = ?"

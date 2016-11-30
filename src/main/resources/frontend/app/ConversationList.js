@@ -148,8 +148,9 @@ export default class extends React.Component {
 
     sendMessage() {
         let email = this.refs.recipient.value;
+        let msg = this.refs.msginput.value;
 
-        if (email == "" || this.refs.msginput.value == "") {
+        if (email == "" || msg == "") {
             return;
         }
 
@@ -158,7 +159,7 @@ export default class extends React.Component {
 
         this.getUserInfoFromEmail(email,function(data){
             if (data != undefined && data !=null) {
-                this.props.sendMessage(this.refs.msginput.value,data.userid);
+                this.props.sendMessage(msg,data.userid);
             } else {
                 alert("Sorry, " + email + "isn't on Buzmo.");
             }
