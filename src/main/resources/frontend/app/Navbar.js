@@ -1,4 +1,5 @@
 import React from 'react'
+import $ from 'jquery'
 import Store from './Store'
 
 function isNormalPositiveInteger(str) {
