@@ -1,8 +1,6 @@
 package edu.ucsb.engineering.buzmo.daos;
 
-import edu.ucsb.engineering.buzmo.api.ChatGroup;
-import edu.ucsb.engineering.buzmo.api.ConversationListItem;
-import edu.ucsb.engineering.buzmo.api.Message;
+import edu.ucsb.engineering.buzmo.api.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
@@ -430,6 +428,33 @@ public class ChatGroupsDAO {
             try { if (conn != null) conn.close(); } catch (Exception e) {}
         }
         return owner;
+    }
+
+    public List<ChatGroupInviteResponse> listInvites(long userid) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<ChatGroupInviteResponse> toReturn = new ArrayList<>();
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("SELECT I.CGID, M.MSG_TIMESTAMP, S.SCREENNAME, C.GROUP_NAME" +
+                    "FROM CHAT_GROUP_INVITES I, MESSAGES M, USERS S, CHAT_GROUPS C" +
+                    "WHERE " +
+                    "I.MID = M.MID AND M.SENDER = S.USERID AND C.CGID = I.CGID " +
+                    "AND I.RECIPIENT = ?"
+            );
+            pstmt.setLong(1, userid);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                toReturn.add(new ChatGroupInviteResponse(rs.getLong("CGID"), rs.getString("GROUP_NAME"),
+                        rs.getString("SCREENNAME"), rs.getLong("MSG_TIMESTAMP")));
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return toReturn;
     }
 
 }
