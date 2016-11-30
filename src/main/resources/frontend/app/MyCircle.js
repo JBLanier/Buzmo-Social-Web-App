@@ -115,7 +115,7 @@ export default class extends React.Component {
 
     getMessages() {
         return this.state.messages.map((msg) => {
-            return (<MyCircleMessage public={msg.public} key={msg.mid} msg={msg.msg} utc={msg.utc} screenname={msg.screenname} readCount={msg.readCount} topics={msg.topics} />);
+            return (<MyCircleMessage userid={msg.userid} public={msg.public} key={msg.mid} mid={msg.mid} msg={msg.msg} utc={msg.utc} screenname={msg.screenname} readCount={msg.readCount} topics={msg.topics} />);
         });
     }
     
