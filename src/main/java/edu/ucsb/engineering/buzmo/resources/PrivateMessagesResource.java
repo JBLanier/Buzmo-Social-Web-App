@@ -40,11 +40,11 @@ public class PrivateMessagesResource {
 
     @Path("/conversation")
     @GET
-    public List<Message> getConversation(@Context SecurityContext ctxt, @QueryParam("offset") int offset,
+    public List<Message> getConversation(@Context SecurityContext ctxt, @QueryParam("before") Long before,
                                          @QueryParam("user") long other) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         //If we want to do pagination, we can do it later.
-        return this.dao.getConversation(user.getUserid(), other, CONV_LIMIT, offset);
+        return this.dao.getConversation(user.getUserid(), other, CONV_LIMIT, before);
     }
 
     @Path("/delete")

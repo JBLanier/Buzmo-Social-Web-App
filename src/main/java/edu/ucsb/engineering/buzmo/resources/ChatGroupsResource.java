@@ -1,5 +1,6 @@
 package edu.ucsb.engineering.buzmo.resources;
 
+import com.sun.org.apache.regexp.internal.RE;
 import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
@@ -21,7 +22,7 @@ import java.util.List;
 public class ChatGroupsResource {
 
     private static final int LIST_LIMIT = 100;
-    private static final int CONV_LIMIT = 100;
+    private static final int CONV_LIMIT = 7;
 
     private ChatGroupsDAO dao;
 
@@ -40,8 +41,8 @@ public class ChatGroupsResource {
     @Path("/conversation")
     @GET
     public List<Message> getConversation(@QueryParam("cgid") long cgid,
-                                         @QueryParam("offset") int offset) throws SQLException {
-        return this.dao.getConversation(cgid, CONV_LIMIT, offset);
+                                         @QueryParam("before") Long before) throws SQLException {
+        return this.dao.getConversation(cgid, CONV_LIMIT, before);
     }
 
     @Path("/conversation/delete")
@@ -101,4 +102,52 @@ public class ChatGroupsResource {
 
     }
 
+    @Path("/create")
+    @POST
+    public Response createGroup(ChatGroup chatGroup) {
+        try {
+            dao.createGroup(chatGroup.getOwner(), chatGroup.getName(), chatGroup.getDuration());
+        } catch (SQLException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @Path("/delete")
+    @POST
+    @PermitAll
+    public Response deleteGroup(@Context SecurityContext ctxt, @QueryParam("cgid") long cgid) {
+        User user = (User) ctxt.getUserPrincipal();
+
+            try {
+                if (dao.checkOwnership(cgid,user.getUserid())) {
+                    dao.deleteGroup(cgid);
+                } else {
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
+            } catch (SQLException e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            }
+            return Response.status(Response.Status.OK).build();
+
+    }
+
+    @Path("/update")
+    @POST
+    @PermitAll
+    public Response deleteGroup(@Context SecurityContext ctxt, ChatGroup chatGroup) {
+        User user = (User) ctxt.getUserPrincipal();
+
+        try {
+            if (dao.checkOwnership(chatGroup.getCgid(),user.getUserid())) {
+                dao.updateGroup(chatGroup.getCgid(),chatGroup.getName(),chatGroup.getDuration(),chatGroup.getOwner());
+            } else {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+        } catch (SQLException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+        return Response.status(Response.Status.OK).build();
+
+    }
 }
