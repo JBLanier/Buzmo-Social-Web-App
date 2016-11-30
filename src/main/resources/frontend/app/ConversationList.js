@@ -4,7 +4,7 @@ import Store from './Store'
 
 function sortByKeyHighestToLowest(array, key) {
     return array.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
+        let x = a[key]; let y = b[key];
         //Highest first, lowest last
         return ((x > y) ? -1 : ((x < y) ? 1 : 0));
     });
@@ -15,7 +15,7 @@ export default class extends React.Component {
 
     constructor() {
         super();
-        this.state={conversationList : []}
+        this.state={conversationList : []};
 
         this.lastFetchPms = true;
     }
@@ -81,13 +81,15 @@ export default class extends React.Component {
 
     renderConversations() {
 
-        var convComponents = this.state.conversationList.map(function(conv) {
-            return <Conversation name = {conv.name}
-                                 onClick={this.props.setNewActiveConversation}
-                                 id={conv.uniqueId}
-                                 active={conv.uniqueId == this.props.activeConvId}/>;
-        }.bind(this));
-        return <div>{convComponents}</div>;
+            var convComponents = this.state.conversationList.map(function (conv) {
+                console.log(conv);
+                return <Conversation name={conv.name}
+                                     onClick={this.props.setNewActiveConversation}
+                                     id={conv.uniqueId}
+                                     active={conv.uniqueId == this.props.activeConvId}
+                                     pmMode={conv.pm}/>;
+            }.bind(this));
+            return <div>{convComponents}</div>;
 
     }
 
@@ -110,6 +112,9 @@ export default class extends React.Component {
         if (email == "" || this.refs.msginput.value == "") {
             return;
         }
+
+        this.refs.recipient.value="";
+        this.refs.msginput.value="";
 
         this.getUserInfoFromEmail(email,function(data){
             if (data != undefined && data !=null) {
@@ -141,8 +146,6 @@ export default class extends React.Component {
                 });
 
         },this);
-
-
     }
 
 

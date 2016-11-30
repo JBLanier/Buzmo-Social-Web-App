@@ -1,6 +1,5 @@
 package edu.ucsb.engineering.buzmo.resources;
 
-import com.sun.org.apache.regexp.internal.RE;
 import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;

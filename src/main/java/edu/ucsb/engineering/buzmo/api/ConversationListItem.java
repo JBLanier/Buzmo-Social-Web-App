@@ -10,12 +10,14 @@ public class ConversationListItem {
     private String name; //group chat name or friend name
     private long uniqueId; //gcid or userid
     private long utc; //timestamp of last message in conversation
+    private boolean isPM;
 
     @JsonCreator
-    public ConversationListItem(String name, long uniqueId, long utc) {
+    public ConversationListItem(String name, long uniqueId, long utc, boolean isPM) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.utc = utc;
+        this.isPM = isPM;
     }
 
     @JsonProperty
@@ -32,4 +34,7 @@ public class ConversationListItem {
     public long getUtc() {
         return utc;
     }
+
+    @JsonProperty
+    public boolean isPM() {return isPM;}
 }
