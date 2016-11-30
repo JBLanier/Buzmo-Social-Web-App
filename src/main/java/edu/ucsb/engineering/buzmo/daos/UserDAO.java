@@ -3,6 +3,7 @@ package edu.ucsb.engineering.buzmo.daos;
 import edu.ucsb.engineering.buzmo.api.User;
 import edu.ucsb.engineering.buzmo.api.UserCreationRequest;
 import edu.ucsb.engineering.buzmo.api.UserSearch;
+import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 import edu.ucsb.engineering.buzmo.util.Toolbox;
 
 import javax.sql.DataSource;
@@ -49,8 +50,11 @@ public class UserDAO {
             "  ) >= ?";
     private DataSource ds;
 
-    public UserDAO(DataSource ds) {
+    private TimeKeeper tk;
+
+    public UserDAO(DataSource ds, TimeKeeper tk) {
         this.ds = ds;
+        this.tk = tk;
     }
 
     public User getUser(long userid) throws SQLException {
@@ -273,12 +277,12 @@ public class UserDAO {
             }
 
             if (us.getN() != null) {
-                pstmt.setLong(paramIdx++, (new Date()).getTime());
+                pstmt.setLong(paramIdx++, tk.getTime());
                 pstmt.setInt(paramIdx++, us.getN());
             }
 
             if (us.getM() != null) {
-                pstmt.setLong(paramIdx++, (new Date()).getTime());
+                pstmt.setLong(paramIdx++, (tk.getTime()));
                 pstmt.setInt(paramIdx++, us.getM());
             }
 

@@ -5,6 +5,7 @@ import edu.ucsb.engineering.buzmo.api.ConversationListItem;
 import edu.ucsb.engineering.buzmo.api.Message;
 import edu.ucsb.engineering.buzmo.api.User;
 import edu.ucsb.engineering.buzmo.daos.PrivateMessageDAO;
+import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
@@ -25,9 +26,11 @@ public class PrivateMessagesResource {
     private static final int CONV_LIMIT = 7;
 
     private PrivateMessageDAO dao;
+    private TimeKeeper tk;
 
-    public PrivateMessagesResource(PrivateMessageDAO dao) {
+    public PrivateMessagesResource(PrivateMessageDAO dao, TimeKeeper tk) {
         this.dao = dao;
+        this.tk = tk;
     }
 
     @Path("/list")
@@ -60,7 +63,7 @@ public class PrivateMessagesResource {
     public void sendMessages(@Context SecurityContext ctxt, MessageInABottle msg) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         //If we want to do pagination, we can do it later.
-        this.dao.sendMessage(user.getUserid(), msg.getRecipient(), msg.getMsg(), (new Date()).getTime());
+        this.dao.sendMessage(user.getUserid(), msg.getRecipient(), msg.getMsg(), tk.getTime());
     }
 
 }

@@ -67,7 +67,6 @@ public class MyCircleDAO {
                     "      M.MID = S.MID AND\n" +
                     "      M.IS_DELETED = 0 AND\n" +
                     "      U.USERID = M.SENDER AND\n" +
-                    "      S.IS_PUBLIC = 1 AND\n" +
                     "      (\n" +
                     "        /* message sent by my friends */\n" +
                     "        M.SENDER IN (\n" +

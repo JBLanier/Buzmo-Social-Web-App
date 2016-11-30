@@ -3,6 +3,7 @@ package edu.ucsb.engineering.buzmo.resources;
 import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
+import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
@@ -11,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 @PermitAll
@@ -24,9 +24,11 @@ public class ChatGroupsResource {
     private static final int CONV_LIMIT = 7;
 
     private ChatGroupsDAO dao;
+    private TimeKeeper tk;
 
-    public ChatGroupsResource(ChatGroupsDAO dao) {
+    public ChatGroupsResource(ChatGroupsDAO dao, TimeKeeper tk) {
         this.dao = dao;
+        this.tk = tk;
     }
 
     @Path("/list")
@@ -54,7 +56,7 @@ public class ChatGroupsResource {
     @POST
     public void sendMessage(@Context SecurityContext ctxt, MessageInABottle msg) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
-        this.dao.sendMessage(user.getUserid(), msg.getRecipient(), (new Date()).getTime(), msg.getMsg());
+        this.dao.sendMessage(user.getUserid(), msg.getRecipient(), tk.getTime(), msg.getMsg());
     }
 
     @GET
@@ -66,7 +68,7 @@ public class ChatGroupsResource {
     @POST
     public Response createChatGroupInvite(ChatGroupInvite inv) throws SQLException {
         ///TODO: need to change time to simulation time
-        dao.sendInvite(inv.getCgid(), inv.getSender(), inv.getRecipient(), inv.getMsg(), new Date().getTime());
+        dao.sendInvite(inv.getCgid(), inv.getSender(), inv.getRecipient(), inv.getMsg(), tk.getTime());
         return Response.status(Response.Status.OK).build();
     }
 

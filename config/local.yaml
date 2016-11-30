@@ -1,6 +1,7 @@
+startTime: 1479110400000
 dbConfig:
-  endpoint: "jdbc:oracle:thin:@jboracle:1521:xe"
-  username: "jb"
+  endpoint: "jdbc:oracle:thin:@localhost:6000:xe"
+  username: "brian"
   password: "oracle"
 server:
   type: simple

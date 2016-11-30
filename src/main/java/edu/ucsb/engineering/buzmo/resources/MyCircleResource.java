@@ -3,6 +3,7 @@ package edu.ucsb.engineering.buzmo.resources;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
+import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
@@ -21,13 +22,18 @@ import java.util.List;
 
 public class MyCircleResource {
 
-    private static final int MC_FETCH_SIZE = 2;
+    private static final int MC_FETCH_SIZE = 7;
     private static final int MC_SEARCH_LIMIT = 7;
 
     private MyCircleDAO dao;
     private UserDAO userDAO;
+    private TimeKeeper tk;
 
-    public MyCircleResource(MyCircleDAO ds, UserDAO userDAO) {this.dao = ds;this.userDAO=userDAO;}
+    public MyCircleResource(MyCircleDAO dao, UserDAO userDAO, TimeKeeper tk) {
+        this.dao = dao;
+        this.userDAO = userDAO;
+        this.tk = tk;
+    }
 
     @Path("/list")
     @PermitAll
@@ -78,6 +84,8 @@ public class MyCircleResource {
             //use the user's topics
             msg.setTopics(this.userDAO.getTopics(user.getUserid()));
         }
+
+        msg.setUtc(tk.getTime()); //override client
         dao.createMyCircleMessage(msg);
         return Response.status(Response.Status.ACCEPTED).build();
 

@@ -4,7 +4,7 @@ import Store from './Store'
 import MyCircleMessage from './MyCircleMessage'
 import {CSVSplit} from './Toolbox'
 
-const MC_FETCH_SIZE = 2;
+const MC_FETCH_SIZE = 7;
 
 export default class extends React.Component {
     

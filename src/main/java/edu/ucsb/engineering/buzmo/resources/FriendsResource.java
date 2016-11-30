@@ -6,6 +6,7 @@ import edu.ucsb.engineering.buzmo.api.UserSearch;
 import edu.ucsb.engineering.buzmo.daos.AlreadyRequest;
 import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
+import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
@@ -24,8 +25,13 @@ public class FriendsResource {
 
     private FriendsDAO dao;
     private UserDAO userDAO;
+    private TimeKeeper tk;
 
-    public FriendsResource(FriendsDAO ds, UserDAO userDAO) {this.dao = ds;this.userDAO=userDAO;}
+    public FriendsResource(FriendsDAO dao, UserDAO userDAO, TimeKeeper tk) {
+        this.dao = dao;
+        this.userDAO = userDAO;
+        this.tk = tk;
+    }
 
     @Path("/list")
     @PermitAll
@@ -57,7 +63,7 @@ public class FriendsResource {
     public Response createRequest(@Context SecurityContext ctxt, @QueryParam("other") long other) throws SQLException {
         User user = (User) ctxt.getUserPrincipal();
         FriendRequest fr = new FriendRequest(0,other, "Please be my friend.",
-                (new Date()).getTime(), user.getUserid(), user.getScreenname());
+                tk.getTime(), user.getUserid(), user.getScreenname());
         try {
             ///TODO: need to change time to simulation time
             dao.createRequest(fr);

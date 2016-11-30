@@ -11,6 +11,7 @@ import edu.ucsb.engineering.buzmo.resources.*;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
 import edu.ucsb.engineering.buzmo.util.DBPoolManager;
 import edu.ucsb.engineering.buzmo.auth.SessionManager;
+import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.setup.Environment;
@@ -69,8 +70,10 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         ds.setTestOnBorrow(true);
         //Our BasicDataSource ds is ready to go!
 
+        TimeKeeper tk = new TimeKeeper(configuration.getStartTime());
+
         //Setup DAOs (pass them the BasicDataSource).
-        UserDAO userDAO = new UserDAO(ds);
+        UserDAO userDAO = new UserDAO(ds, tk);
         FriendsDAO friendsDAO = new FriendsDAO(ds);
         PrivateMessageDAO privateDAO = new PrivateMessageDAO(ds);
         ChatGroupsDAO chatGroupsDAO = new ChatGroupsDAO(ds);
@@ -81,12 +84,12 @@ public class BuzMo extends Application<BuzMoConfiguration> {
 
         //Register resources.
         environment.jersey().register(new HelloResource());
-        environment.jersey().register(new FriendsResource(friendsDAO, userDAO));
+        environment.jersey().register(new FriendsResource(friendsDAO, userDAO, tk));
         environment.jersey().register(new UserResource(userDAO));
         environment.jersey().register(new AuthResource(sm, userDAO));
-        environment.jersey().register(new PrivateMessagesResource(privateDAO));
-        environment.jersey().register(new ChatGroupsResource(chatGroupsDAO));
-        environment.jersey().register(new MyCircleResource(myCircleDAO, userDAO));
+        environment.jersey().register(new PrivateMessagesResource(privateDAO, tk));
+        environment.jersey().register(new ChatGroupsResource(chatGroupsDAO, tk));
+        environment.jersey().register(new MyCircleResource(myCircleDAO, userDAO, tk));
 
         //We could now pass in userDAO to a resource via that resource's constructor.
         //That resource could then store userDAO in a field.
