@@ -106,6 +106,46 @@ export default class extends React.Component {
         }
     }
 
+    renderNewGroupButton() {
+        if (!this.props.pmMode) {
+            return (
+                <div className="btn-group btn-group-justified" role="group">
+                    <div className="btn-group" role="group">
+                        <button className="btn btn-default" id="new-message-button"
+                        onClick={this.createNewGroup}>Create New Group</button>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    createNewGroup() {
+        new Store().getUser(function (user) {
+            new Store().getAuth(function (auth) {
+                $.ajax({
+                    method: "POST",
+                    url: "http://localhost:8080/api/chatgroups/create",
+                    beforeSend: function (request)
+                    {
+                        request.setRequestHeader("auth_token", auth);
+                    },
+                    data: JSON.stringify({
+                        name: "New Group",
+                        duration: 7,
+                        owner: user.userid}),
+                    contentType: "application/json"
+                })
+                    .done(function (data) {
+                        alert("New Group Created!");
+                    }.bind(this))
+                    .fail(function (err) {
+                        alert("Creating a new group failed");
+                    });
+
+            },this);
+        },this);
+    }
+
     sendMessage() {
         let email = this.refs.recipient.value;
 
@@ -160,6 +200,7 @@ export default class extends React.Component {
 
             <div className="pre-scrollable main-scrollable-content"id="scrollable-conversations-list">
 
+                {this.renderNewGroupButton()}
                 {this.renderNewMessageButton()}
 
                 <div className="modal fade" id="myModal" role="dialog">

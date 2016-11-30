@@ -21,6 +21,8 @@ public class ChatGroupsDAO {
         this.ds = ds;
     }
 
+
+/// This implementation only retrieves groups in which there are existing messages:
 //    public List<ConversationListItem> getConversationList(long userid, int limit, int offset) throws SQLException {
 //        Connection conn = null;
 //        PreparedStatement pstmt = null;
@@ -77,37 +79,55 @@ public class ChatGroupsDAO {
         List<ConversationListItem> convos = new ArrayList<>();
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT * FROM (\n" +
-                    "  SELECT D.CGID, D.GROUP_NAME, UTC FROM (\n" +
-                    "    SELECT\n" +
-                    "      C.CGID,\n" +
-                    "      MAX(M.MSG_TIMESTAMP) AS UTC\n" +
-                    "    FROM CHAT_GROUPS C, CHAT_GROUP_MESSAGES S, MESSAGES M\n" +
-                    "    WHERE\n" +
-                    "      C.CGID = S.CGID AND\n" +
-                    "      S.MID = M.MID AND\n" +
-                    "      M.IS_DELETED = 0\n" +
-                    "    GROUP BY C.CGID\n" +
-                    "  ) F, CHAT_GROUPS D\n" +
-                    "  WHERE\n" +
-                    "    F.CGID = D.CGID AND\n" +
-                    "    F.CGID IN (\n" +
-                    "      /* chat group ids of groups user is member of */\n" +
-                    "      SELECT X.CGID FROM CHAT_GROUP_MEMBERS X\n" +
-                    "      WHERE X.USERID = ?\n" +
-                    "    )\n" +
-                    "  ORDER BY UTC DESC\n" +
+            pstmt = conn.prepareStatement(
+                "SELECT * FROM (\n" +
+                        "SELECT * FROM (\n" +
+
+                            "  SELECT D.CGID, D.GROUP_NAME, UTC FROM (\n" +
+                            "    SELECT\n" +
+                            "      C.CGID,\n" +
+                            "      MAX(M.MSG_TIMESTAMP) AS UTC\n" +
+                            "    FROM CHAT_GROUPS C, CHAT_GROUP_MESSAGES S, MESSAGES M\n" +
+                            "    WHERE\n" +
+                            "      C.CGID = S.CGID AND\n" +
+                            "      S.MID = M.MID AND\n" +
+                            "      M.IS_DELETED = 0\n" +
+                            "    GROUP BY C.CGID\n" +
+                            "  ) F, CHAT_GROUPS D\n" +
+                            "  WHERE\n" +
+                            "    F.CGID = D.CGID AND\n" +
+                            "    F.CGID IN (\n" +
+                            "      /* chat group ids of groups user is member of */\n" +
+                            "      SELECT X.CGID FROM CHAT_GROUP_MEMBERS X\n" +
+                            "      WHERE X.USERID = ?\n" +
+                            "    )\n" +
+
+
+                            "UNION\n" +
+
+                            "SELECT C2.CGID, C2.GROUP_NAME, 0 AS UTC \n" +
+                            "FROM CHAT_GROUPS C2, CHAT_GROUP_MEMBERS M2\n" +
+                            "WHERE M2.USERID = ? AND\n" +
+                            "C2.CGID = M2.CGID AND\n" +
+                        "  NOT EXISTS(SELECT *\n" +
+                        "             FROM CHAT_GROUP_MESSAGES CM\n" +
+                        "              WHERE CM.CGID = C2.CGID)\n" +
+
+                        ")\n" +
+                        "ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
                     "    ROWNUM > ? AND\n" +
                     "    ROWNUM <= ? + ?");
             pstmt.setLong(1, userid);
-            pstmt.setInt(2, offset);
+            pstmt.setLong(2, userid);
             pstmt.setInt(3, offset);
-            pstmt.setInt(4, limit);
+            pstmt.setInt(4, offset);
+            pstmt.setInt(5, limit);
 
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
-            if (rs.next()) {
+
+            while (rs.next()) {
                 convos.add(new ConversationListItem(rs.getString("GROUP_NAME"), rs.getLong("CGID"),
                         rs.getLong("UTC"),false));
             }
@@ -309,7 +329,7 @@ public class ChatGroupsDAO {
         try {
             conn = this.ds.getConnection();
             String generatedColumns[] = {"CGID"};
-            pstmt = conn.prepareStatement("INSERT INTO CHAT_GROUPS(NAME,DURATION,OWNER) VALUES (?,?,?)",
+            pstmt = conn.prepareStatement("INSERT INTO CHAT_GROUPS(GROUP_NAME,DURATION,OWNER) VALUES (?,?,?)",
                     generatedColumns);
             pstmt.setString(1, name);
             pstmt.setLong(2, duration);

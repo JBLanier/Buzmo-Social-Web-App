@@ -135,12 +135,12 @@ public class ChatGroupsResource {
     @Path("/update")
     @POST
     @PermitAll
-    public Response deleteGroup(@Context SecurityContext ctxt, ChatGroup chatGroup) {
+    public Response updateGroup(@Context SecurityContext ctxt, ChatGroup chatGroup) {
         User user = (User) ctxt.getUserPrincipal();
 
         try {
             if (dao.checkOwnership(chatGroup.getCgid(),user.getUserid())) {
-                dao.updateGroup(chatGroup.getCgid(),chatGroup.getName(),chatGroup.getDuration(),chatGroup.getOwner());
+                dao.updateGroup(chatGroup.getCgid(),chatGroup.getName(),chatGroup.getDuration(),user.getUserid());
             } else {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
