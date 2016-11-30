@@ -82,7 +82,7 @@ export default class extends React.Component {
     post() {
         if (this.state.sMsg === "") return;
         let recipients = this.state.sRecipients.replace(/[^a-zA-Z0-9@.\-,]/g, "");
-        let topics = this.state.sTopics.replace(/[^a-zA-Z0-9,]/g, "");
+        let topics = this.state.sTopics.replace(/[^a-z\sA-Z0-9,]/g, "");
         topics = CSVSplit(topics);
         recipients = CSVSplit(recipients);
         new Store().getAuth(function (auth) {

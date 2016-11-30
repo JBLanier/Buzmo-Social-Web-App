@@ -257,13 +257,13 @@ public class UserDAO {
                 }
                 query += S_NUMBER;
             }
-
+            query = String.format("SELECT * FROM (%s) WHERE ROWNUM > ? AND ROWNUM <= ? + ?", query);
+            System.out.println(query);
             //Prepare statement.
-            pstmt = conn.prepareStatement(
-                    String.format("SELECT * FROM (%s) WHERE ROWNUM > ? AND ROWNUM <= ? + ?", query));
+            pstmt = conn.prepareStatement(query);
             int paramIdx = 1;
             if (email != null) {
-                pstmt.setString(paramIdx++, String.format("%%%s%%", email));
+                pstmt.setString(paramIdx++, String.format("%%%s%%", email.toUpperCase()));
             }
 
             if (topics != null && topics.size() > 0) {
