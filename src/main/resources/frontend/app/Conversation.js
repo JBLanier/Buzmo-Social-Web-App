@@ -1,6 +1,11 @@
 import React from 'react'
 import Store from './Store'
 
+function isNormalPositiveInteger(str) {
+    let n = ~~Number(str);
+    return String(n) === str && n > 0;
+}
+
 export default class extends React.Component {
 
     constructor() {
@@ -131,16 +136,47 @@ export default class extends React.Component {
     }
 
     updateGroup(){
+
+        let newName = this.refs.changename.value;
+        let newDuration = this.refs.changeduration.value;
+
+        if (newName == "" && newDuration == "") {
+            alert("You didn't actually enter anything...");
+            return;
+        }
+
+        if (newDuration != "" && !isNormalPositiveInteger(newDuration)) {
+            alert("Sorry! Please enter a normal positive integer.");
+            return;
+        }
+
+        if (newDuration == "") {
+            newDuration = this.state.duration;
+        }
+
+        if (newName == "") {
+            newName = this.state.groupName;
+        }
+
+        this.refs.changename.placeholder=newName;
+        this.refs.changeduration.placeholer=newDuration;
+
+        this.refs.changename.value="";
+        this.refs.changeduration.value="";
+
+
         new Store().getAuth(function (auth) {
             $.ajax({
                 method: "POST",
-                url: "http://localhost:8080/api/chatgroups/gfd?cgid=" + this.props.id,
+                url: "http://localhost:8080/api/chatgroups/update",
                 beforeSend: function (request)
                 {
                     request.setRequestHeader("auth_token", auth);
                 },
-                data: null,
-                contentType: null
+                data: JSON.stringify({ cgid: this.props.id,
+                                       name: newName,
+                                       duration: newDuration}),
+                contentType: "application/json"
             })
                 .done(function (data) {
                     alert(this.props.name + " Updated!");
