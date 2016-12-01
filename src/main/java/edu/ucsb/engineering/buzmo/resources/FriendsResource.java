@@ -88,4 +88,11 @@ public class FriendsResource {
     public List<User> searchUsers(UserSearch search) throws SQLException {
         return this.userDAO.searchUsers(search, 0, 7);
     }
+    @Path("/check")
+    @PermitAll
+    @POST
+    public boolean checkFriends(@Context SecurityContext ctxt, List<String> emails) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
+        return this.dao.friendCheck(user.getUserid(), emails);
+    }
 }

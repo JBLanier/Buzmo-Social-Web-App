@@ -188,4 +188,55 @@ public class FriendsDAO {
             try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
         }
     }
+
+    public boolean friendCheck(long userid, List<String> emails) throws SQLException {
+        if (emails == null || emails.size() == 0) return false;
+        String query = "SELECT COUNT(*) FROM USERS U, FRIENDS F\n" +
+                "WHERE\n" +
+                "  (\n" +
+                "    U.USERID = F.U1 AND\n" +
+                "    F.U2 = ? AND (%s)\n" +
+                "  ) OR (\n" +
+                "    U.USERID = F.U2 AND\n" +
+                "    F.U1 = ? AND (%s)\n" +
+                "  )";
+
+        String check = "";
+
+        for (int i = 0; i < emails.size(); i++) {
+            if (i != 0) {
+                check += " OR ";
+            }
+            check += " LOWER(U.EMAIL) LIKE ? ";
+        }
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean areFriends = false;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement(String.format(query, check, check));
+            int idx = 1;
+            pstmt.setLong(idx++, userid);
+            for (String email: emails) {
+                pstmt.setString(idx++, email.toLowerCase());
+            }
+            pstmt.setLong(idx++, userid);
+            for (String email: emails) {
+                pstmt.setString(idx++, email.toLowerCase());
+            }
+            rs = pstmt.executeQuery();
+            //Get the first result, if one is found.
+            if (rs.next()) {
+                //Insert into private messages.
+                long count = rs.getLong(1);
+                if (count == emails.size()) areFriends = true;
+            }
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+        }
+        return areFriends;
+    }
 }

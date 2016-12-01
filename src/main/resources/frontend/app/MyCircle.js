@@ -89,22 +89,41 @@ export default class extends React.Component {
             console.log("Posting a new message.");
             $.ajax({
                 method: "POST",
-                url: "http://localhost:8080/api/mycircle/create",
+                url: "http://localhost:8080/api/friends/check",
                 beforeSend: function (request)
                 {
                     request.setRequestHeader("auth_token", auth);
                 },
-                data: JSON.stringify({
-                    recipients,
-                    utc: (new Date()).getTime(),
-                    topics,
-                    public: this.state.sPublic,
-                    msg: this.state.sMsg
-                }),
+                data: JSON.stringify(recipients),
                 contentType: "application/json"
             })
-                .done(() => {
-                    alert("Message Posted!");
+                .done((result) => {
+                    if (!result) {
+                        alert ("You are not friends with all those users!")
+                    } else {
+                        $.ajax({
+                            method: "POST",
+                            url: "http://localhost:8080/api/mycircle/create",
+                            beforeSend: function (request)
+                            {
+                                request.setRequestHeader("auth_token", auth);
+                            },
+                            data: JSON.stringify({
+                                recipients,
+                                utc: (new Date()).getTime(),
+                                topics,
+                                public: this.state.sPublic,
+                                msg: this.state.sMsg
+                            }),
+                            contentType: "application/json"
+                        })
+                            .done(() => {
+                                alert("Message Posted!");
+                            })
+                            .fail(function (err) {
+                                alert("Could not post message: " + JSON.stringify(err));
+                            });
+                    }
                 })
                 .fail(function (err) {
                     alert("Could not post message: " + JSON.stringify(err));

@@ -62,7 +62,7 @@ export default class extends React.Component {
 
     getFriends() {
         return this.state.friends.map((fri, idx) => {
-            return (<li key={idx}>{fri.screenname}</li>);
+            return (<li key={idx}>{fri.screenname} ({fri.email})</li>);
         });
     }
     

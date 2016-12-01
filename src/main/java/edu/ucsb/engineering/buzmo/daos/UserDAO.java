@@ -147,7 +147,7 @@ public class UserDAO {
             pstmt.setLong(1,userid);
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
-            if (rs.next()) {
+            while (rs.next()) {
                 toReturn.add(rs.getString("LABEL"));
             }
         } finally {
