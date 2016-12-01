@@ -73,8 +73,8 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         ds.setTestOnBorrow(true);
         //Our BasicDataSource ds is ready to go!
 
-        //TimeKeeper tk = new TimeKeeper(configuration.getStartTime());
-        TimeKeeper tk = new TimeKeeper(new Date().getTime());
+        TimeKeeper tk = new TimeKeeper(configuration.getStartTime());
+        //TimeKeeper tk = new TimeKeeper(new Date().getTime());
 
         //Setup DAOs (pass them the BasicDataSource).
         UserDAO userDAO = new UserDAO(ds, tk);
