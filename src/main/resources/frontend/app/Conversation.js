@@ -96,43 +96,72 @@ export default class extends React.Component {
         this.refs.sendinv.value="";
 
         this.getUserInfoFromEmail(email,function(data){
-            if (data != undefined && data !=null) {
-                new Store().getAuth(function (auth) {
-                    $.ajax({
-                        method: "POST",
-                        url: "http://localhost:8080/api/chatgroups/invite/create",
-                        beforeSend: function (request)
-                        {
-                            request.setRequestHeader("auth_token", auth);
-                        },
+            this.friendCheck(email,function(friend){
+                if (data != undefined && data !=null) {
+                    if (friend == true) {
+                        new Store().getAuth(function (auth) {
+                            $.ajax({
+                                method: "POST",
+                                url: "http://localhost:8080/api/chatgroups/invite/create",
+                                beforeSend: function (request) {
+                                    request.setRequestHeader("auth_token", auth);
+                                },
 
-                    //     private long mid;
-                    // private long recipient;
-                    // private String msg;
-                    // private long msg_timestamp;
-                    // private long sender;
-                    // private String sender_name;
-                    // private long cgid;
+                                //     private long mid;
+                                // private long recipient;
+                                // private String msg;
+                                // private long msg_timestamp;
+                                // private long sender;
+                                // private String sender_name;
+                                // private long cgid;
 
 
-                        data: JSON.stringify({ recipient: data.userid,
-                                               msg: "You're invited to join " + this.props.name,
-                                               cgid: this.props.id}),
-                        contentType: "application/json"
-                    })
-                        .done(function (data) {
-                            alert("Message Sent!");
-                        })
-                        .fail(function (err) {
-                            alert("Something went wrong with sending the invite.\n" +
-                                "It's likely because they're already invited");
-                        });
+                                data: JSON.stringify({
+                                    recipient: data.userid,
+                                    msg: "You're invited to join " + this.props.name,
+                                    cgid: this.props.id
+                                }),
+                                contentType: "application/json"
+                            })
+                                .done(function (data) {
+                                    alert("Message Sent!");
+                                })
+                                .fail(function (err) {
+                                    alert("Something went wrong with sending the invite.\n" +
+                                        "It's likely because they're already invited");
+                                });
 
-                },this);
-            } else {
-                alert("Sorry, " + email + "isn't on Buzmo.");
-            }
+                        }, this);
+                    } else {
+                        alert("Sorry, you must be friends with " + email + " to invite them.");
+                    }
+                } else {
+                    alert("Sorry, " + email + "isn't on Buzmo.");
+                }
+            },this)
         },this)
+    }
+
+    friendCheck(email, callback, context) {
+        new Store().getAuth(function (auth) {
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8080/api/friends/check",
+                beforeSend: function (request)
+                {
+                    request.setRequestHeader("auth_token", auth);
+                },
+                data: JSON.stringify([email]),
+                contentType: "application/json"
+            })
+                .done(function (data) {
+                    callback.call(context, data);
+                })
+                .fail(function (err) {
+                    callback.call(context, undefined);
+                });
+
+        },this);
     }
 
     updateGroup(){
