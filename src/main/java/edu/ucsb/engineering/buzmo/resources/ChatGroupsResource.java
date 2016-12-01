@@ -65,10 +65,12 @@ public class ChatGroupsResource {
     }
 
     @Path("/invite/create")
+    @PermitAll
     @POST
-    public Response createChatGroupInvite(ChatGroupInvite inv) throws SQLException {
+    public Response createChatGroupInvite(@Context SecurityContext ctxt, ChatGroupInvite inv) throws SQLException {
+        User user = (User) ctxt.getUserPrincipal();
         ///TODO: need to change time to simulation time
-        dao.sendInvite(inv.getCgid(), inv.getSender(), inv.getRecipient(), inv.getMsg(), tk.getTime());
+        dao.sendInvite(inv.getCgid(), user.getUserid(), inv.getRecipient(), inv.getMsg(), tk.getTime());
         return Response.status(Response.Status.OK).build();
     }
 
