@@ -139,7 +139,7 @@ INSERT INTO MESSAGES VALUES (17,'[emoji]',1478801760000,21,0);
 INSERT INTO CHAT_GROUP_MESSAGES VALUES (17,3);
 
 
-INSERT INTO MESSAGES VALUES (18,'Proud to work alongside these & many more veterans at Apple. We honor all the brave men & women who sacrificed for our freedom.',1478874420000,19,0);
+INSERT INTO MESSAGES VALUES (18,'Proud to work alongside these ' || Chr(38) || ' many more veterans at Apple. We honor all the brave men '|| Chr(38) || ' women who sacrificed for our freedom.',1478874420000,19,0);
 INSERT INTO MC_MESSAGES VALUES (18,1,1);
 INSERT INTO TOPICS VALUES (1,'veterans');
 INSERT INTO TOPICS VALUES (2,'apple');
