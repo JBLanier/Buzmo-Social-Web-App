@@ -22,7 +22,7 @@ import java.util.List;
 public class PrivateMessagesResource {
 
     private static final int LIST_LIMIT = 100;
-    private static final int CONV_LIMIT = 5;
+    private static final int CONV_LIMIT = 7;
 
     private PrivateMessageDAO dao;
     private TimeKeeper tk;
