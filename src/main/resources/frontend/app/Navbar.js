@@ -1,5 +1,6 @@
 import React from 'react'
 import Store from './Store'
+import {UTCToString} from './Toolbox'
 
 function isNormalPositiveInteger(str) {
     let n = ~~Number(str);
@@ -11,7 +12,8 @@ export default class extends React.Component {
     constructor() {
         super();
         this.state = {screenname: "",
-                        isManager: false};
+                        isManager: false,
+                        time: ""};
     }
 
     getClassNameActiveMyCircle() {
@@ -42,7 +44,8 @@ export default class extends React.Component {
         new Store().getUser(function (user) {
             this.screennameSet = true;
             this.setState({screenname: user.screenname,
-                            isManager: user.isManager});
+                            isManager: user.isManager,
+                            time: this.state.time});
         }, this);
 
     }
@@ -52,12 +55,39 @@ export default class extends React.Component {
             return (
                     <li>
                         <a><span className="glyphicon glyphicon-console"
-                                 data-toggle="modal" data-target="#managerModal"></span></a>
+                                 data-toggle="modal" data-target="#managerModal" onClick={this.getTime.bind(this)}></span></a>
 
                     </li>
 
             )
         }
+    }
+
+    getTime(){
+        new Store().getAuth(function (auth) {
+            $.ajax({
+                method: "GET",
+                url: "http://localhost:8080/api/time/get",
+                beforeSend: function (request)
+                {
+                    request.setRequestHeader("auth_token", auth);
+                },
+
+                data: null,
+                contentType: null
+            })
+                .done(function (data) {
+                    this.setState({
+                        screenname: this.state.screenname,
+                        isManager: this.state.isManager,
+                        time: data
+                    })
+                }.bind(this))
+                .fail(function (err) {
+                    alert("Something went wrong with getting the time");
+                });
+
+        },this);
     }
 
     setNewTime(){
@@ -75,7 +105,7 @@ export default class extends React.Component {
             alert("setting new time...");
             new Store().getAuth(function (auth) {
                 $.ajax({
-                    method: "GET",
+                    method: "POST",
                     url: "http://localhost:8080/api/time/set?utc="+newTime,
                     beforeSend: function (request)
                     {
@@ -147,7 +177,8 @@ export default class extends React.Component {
                         </div>
                         <div className="modal-body">
 
-                            <label for="settime">Set New Time:</label>
+                            <label for="settime">Set New Time, Current time is: {this.state.time + " "}
+                                {UTCToString(this.state.time)}</label>
                             <div className="input-group">
                                 <input type="text" className="form-control" ref="settime" placeholder="UTC in milliseconds" id="settime"/>
                                 <span className="input-group-btn">

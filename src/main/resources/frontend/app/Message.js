@@ -1,6 +1,7 @@
 import React from 'react'
 import Store from './Store'
 import $ from 'jquery'
+import {UTCToString} from './Toolbox'
 
 export default class extends React.Component {
 
@@ -145,7 +146,7 @@ export default class extends React.Component {
                     </div>
                 </div>
                 <div className="row message-time" style={this.getTimeStyle()}>
-                    {this.props.time}
+                    {UTCToString(this.props.time)}
                 </div>
             </div>
         )

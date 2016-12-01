@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import java.util.Date;
 import java.util.EnumSet;
 
 
@@ -70,7 +71,8 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         ds.setTestOnBorrow(true);
         //Our BasicDataSource ds is ready to go!
 
-        TimeKeeper tk = new TimeKeeper(configuration.getStartTime());
+        //TimeKeeper tk = new TimeKeeper(configuration.getStartTime());
+        TimeKeeper tk = new TimeKeeper(new Date().getTime());
 
         //Setup DAOs (pass them the BasicDataSource).
         UserDAO userDAO = new UserDAO(ds, tk);
