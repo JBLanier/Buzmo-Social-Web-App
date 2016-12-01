@@ -132,6 +132,31 @@ export default class extends React.Component {
 
     }
 
+    resetDB() {
+
+        if (confirm("ARE YOU SURE YOU WANT TO RESET THE DB?")) {
+
+            new Store().getAuth(function (auth) {
+                $.ajax({
+                    method: "POST",
+                    url: "http://localhost:8080/api/stub",
+                    beforeSend: function (request) {
+                        request.setRequestHeader("auth_token", auth);
+                    },
+                    data: null,
+                    contentType: null
+                })
+                    .done(function () {
+                        alert("DATABASE RESETTING\nWait a moment for the schema to be initialized...");
+                    })
+                    .fail(function (err) {
+                        alert("Request was met with an error");
+                    });
+
+            }, this);
+        }
+    }
+
     render() {
 
 
@@ -188,6 +213,10 @@ export default class extends React.Component {
 
                             <span className="input-group-btn">
                                 <button className="btn btn-default" type="button">Generate Report</button>
+                            </span>
+                            <span className="input-group-btn" >
+                                <button className="btn btn-warning" type="button"
+                                        onClick={this.resetDB}>RESET DB TO SAMPLE STATE</button>
                             </span>
                         </div>
                         <div className="modal-footer">
