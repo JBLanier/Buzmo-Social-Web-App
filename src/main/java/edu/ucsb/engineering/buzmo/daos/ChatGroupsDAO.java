@@ -188,6 +188,30 @@ public class ChatGroupsDAO {
         return msgs;
     }
 
+    public void cleanup(long utc) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("UPDATE MESSAGES M\n" +
+                    "SET M.IS_DELETED = 1\n" +
+                    "WHERE\n" +
+                    "  M.MID IN (\n" +
+                    "      SELECT S.MID\n" +
+                    "      FROM MESSAGES S, CHAT_GROUP_MESSAGES G, CHAT_GROUPS P\n" +
+                    "      WHERE \n" +
+                    "        S.MID = G.MID AND\n" +
+                    "        P.CGID = G.CGID AND\n" +
+                    "        (? - S.MSG_TIMESTAMP) > (P.DURATION * 86400000)\n" +
+                    "  )");
+            pstmt.setLong(1, utc);
+            pstmt.executeUpdate();
+        } finally {
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+    }
+
     public void markDeleted(long mid) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;

@@ -1,10 +1,11 @@
 import React from 'react'
+import $ from 'jquery'
 import Store from './Store'
 import {UTCToString} from './Toolbox'
 
 function isNormalPositiveInteger(str) {
     let n = ~~Number(str);
-    return String(n) === str && n > 0;
+    return n > 0;
 }
 
 export default class extends React.Component {
@@ -96,13 +97,12 @@ export default class extends React.Component {
 
         let newTime = this.refs.settime.value;
 
-        if(newTime == "") {
+        if(newTime === "") {
             alert("You have to type something");
             return;
         }
-
         if (isNormalPositiveInteger(newTime)) {
-            alert("setting new time...");
+            console.log("setting new time...");
             new Store().getAuth(function (auth) {
                 $.ajax({
                     method: "POST",
@@ -111,7 +111,6 @@ export default class extends React.Component {
                     {
                         request.setRequestHeader("auth_token", auth);
                     },
-
                     data: null,
                     contentType: null
                 })
