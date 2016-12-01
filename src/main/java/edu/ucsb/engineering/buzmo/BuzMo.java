@@ -96,7 +96,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         environment.jersey().register(new PrivateMessagesResource(privateDAO, tk));
         environment.jersey().register(new ChatGroupsResource(chatGroupsDAO, tk));
         environment.jersey().register(new MyCircleResource(myCircleDAO, userDAO, tk));
-        environment.jersey().register(new TimeResource(tk));
+        environment.jersey().register(new TimeResource(tk, chatGroupsDAO));
 
         //We could now pass in userDAO to a resource via that resource's constructor.
         //That resource could then store userDAO in a field.
