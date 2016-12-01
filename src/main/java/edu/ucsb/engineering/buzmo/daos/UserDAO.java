@@ -3,7 +3,7 @@ package edu.ucsb.engineering.buzmo.daos;
 import edu.ucsb.engineering.buzmo.api.User;
 import edu.ucsb.engineering.buzmo.api.UserCreationRequest;
 import edu.ucsb.engineering.buzmo.api.UserSearch;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 import edu.ucsb.engineering.buzmo.util.Toolbox;
 
 import javax.sql.DataSource;
@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class UserDAO {

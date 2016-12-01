@@ -199,3 +199,9 @@ CREATE TABLE private_messages (
   FOREIGN KEY (mid) REFERENCES messages ON DELETE CASCADE,
   FOREIGN KEY (recipient) REFERENCES users(userid) ON DELETE CASCADE
 );
+
+CREATE TABLE GAME_TIME (
+    gtid NUMBER(15),
+    utc NUMBER(15),
+    PRIMARY KEY(gtid)
+);

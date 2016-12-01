@@ -5,7 +5,7 @@ import edu.ucsb.engineering.buzmo.api.ConversationListItem;
 import edu.ucsb.engineering.buzmo.api.Message;
 import edu.ucsb.engineering.buzmo.api.User;
 import edu.ucsb.engineering.buzmo.daos.PrivateMessageDAO;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
@@ -13,7 +13,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 @PermitAll

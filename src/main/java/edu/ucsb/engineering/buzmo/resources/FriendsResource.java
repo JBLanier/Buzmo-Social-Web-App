@@ -6,7 +6,7 @@ import edu.ucsb.engineering.buzmo.api.UserSearch;
 import edu.ucsb.engineering.buzmo.daos.AlreadyRequest;
 import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 @Path("/friends")

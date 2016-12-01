@@ -4,7 +4,7 @@ import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
 import edu.ucsb.engineering.buzmo.daos.NotAllEmailsValid;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;

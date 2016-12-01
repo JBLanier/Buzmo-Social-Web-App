@@ -3,7 +3,7 @@ package edu.ucsb.engineering.buzmo.resources;
 import edu.ucsb.engineering.buzmo.api.MessageInABottle;
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;

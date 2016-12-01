@@ -9,10 +9,11 @@ import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 import edu.ucsb.engineering.buzmo.resources.*;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
+import edu.ucsb.engineering.buzmo.time.TimeKeeperTask;
 import edu.ucsb.engineering.buzmo.util.CleanupTask;
 import edu.ucsb.engineering.buzmo.util.DBPoolManager;
 import edu.ucsb.engineering.buzmo.auth.SessionManager;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.setup.Environment;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.Timer;
 
@@ -73,8 +73,9 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         ds.setTestOnBorrow(true);
         //Our BasicDataSource ds is ready to go!
 
-        TimeKeeper tk = new TimeKeeper(configuration.getStartTime());
-        //TimeKeeper tk = new TimeKeeper(new Date().getTime());
+        TimeKeeper tk = new TimeKeeper(ds);
+        Timer timer1 = new Timer();
+        timer1.scheduleAtFixedRate(new TimeKeeperTask(tk), 0, 10000);
 
         //Setup DAOs (pass them the BasicDataSource).
         UserDAO userDAO = new UserDAO(ds, tk);

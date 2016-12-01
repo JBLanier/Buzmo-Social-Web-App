@@ -2,7 +2,7 @@ package edu.ucsb.engineering.buzmo.resources;
 
 
 import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
-import edu.ucsb.engineering.buzmo.util.TimeKeeper;
+import edu.ucsb.engineering.buzmo.time.TimeKeeper;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
