@@ -110,9 +110,8 @@ public class ChatGroupsDAO {
                             "WHERE M2.USERID = ? AND\n" +
                             "C2.CGID = M2.CGID AND\n" +
                         "  NOT EXISTS(SELECT *\n" +
-                        "             FROM CHAT_GROUP_MESSAGES CM\n" +
-                        "              WHERE CM.CGID = C2.CGID)\n" +
-
+                        "             FROM CHAT_GROUP_MESSAGES CM, MESSAGES M3\n" +
+                        "             WHERE CM.CGID = C2.CGID AND CM.MID = M3.MID AND M3.IS_DELETED = 0)\n" +
                         ")\n" +
                         "ORDER BY UTC DESC\n" +
                     ") WHERE\n" +
