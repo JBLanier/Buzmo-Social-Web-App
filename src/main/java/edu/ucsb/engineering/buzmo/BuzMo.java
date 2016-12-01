@@ -2,11 +2,7 @@ package edu.ucsb.engineering.buzmo;
 
 
 import edu.ucsb.engineering.buzmo.config.BuzMoConfiguration;
-import edu.ucsb.engineering.buzmo.daos.ChatGroupsDAO;
-import edu.ucsb.engineering.buzmo.daos.FriendsDAO;
-import edu.ucsb.engineering.buzmo.daos.PrivateMessageDAO;
-import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
-import edu.ucsb.engineering.buzmo.daos.UserDAO;
+import edu.ucsb.engineering.buzmo.daos.*;
 import edu.ucsb.engineering.buzmo.resources.*;
 import edu.ucsb.engineering.buzmo.auth.BuzmoAuthFilter;
 import edu.ucsb.engineering.buzmo.time.TimeKeeperTask;
@@ -83,6 +79,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         PrivateMessageDAO privateDAO = new PrivateMessageDAO(ds);
         ChatGroupsDAO chatGroupsDAO = new ChatGroupsDAO(ds);
         MyCircleDAO myCircleDAO = new MyCircleDAO(ds);
+        ReportDAO reportDAO = new ReportDAO(ds);
 
         //Session Manager
         SessionManager sm = new SessionManager();
@@ -100,6 +97,7 @@ public class BuzMo extends Application<BuzMoConfiguration> {
         environment.jersey().register(new ChatGroupsResource(chatGroupsDAO, tk));
         environment.jersey().register(new MyCircleResource(myCircleDAO, userDAO, tk));
         environment.jersey().register(new TimeResource(tk, chatGroupsDAO));
+        environment.jersey().register(new ReportResource(tk, reportDAO));
 
         //We could now pass in userDAO to a resource via that resource's constructor.
         //That resource could then store userDAO in a field.
