@@ -48,7 +48,6 @@ public class MyCircleDAO {
                     "      S.MID = R.MID AND\n" +
                     "      U.USERID = M.SENDER AND\n" +
                     "      M.IS_DELETED = 0 AND\n" +
-                    "      S.IS_PUBLIC = 0 AND /* should always be private if sent directly, this is just for safety */\n" +
                     "      /* message sent to me or from me */\n" +
                     "      (R.RECIPIENT = ? OR M.SENDER = ?)\n" +
                     "    UNION\n" +
@@ -67,7 +66,7 @@ public class MyCircleDAO {
                     "      M.MID = S.MID AND\n" +
                     "      M.IS_DELETED = 0 AND\n" +
                     "      U.USERID = M.SENDER AND\n" +
-                    "      (\n" +
+                    "      ((\n" +
                     "        /* message sent by my friends */\n" +
                     "        M.SENDER IN (\n" +
                     "          /* Get all userIds of my friends. */\n" +
@@ -81,7 +80,7 @@ public class MyCircleDAO {
                     "        )\n" +
                     "        OR\n" +
                     "        /* message sent by me */\n" +
-                    "        M.SENDER = ?\n" +
+                    "        M.SENDER = ?) AND S.IS_BROADCAST = 1\n" +
                     "      )\n" +
                     "  )\n" +
                     ((before == null) ? "" : "WHERE UTC < ?\n") +
