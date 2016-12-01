@@ -213,9 +213,11 @@ export default class extends React.Component {
                             </div>
                             <div className="modal-body">
                                 <label for="recipient">Name:</label>
-                                <input type="text" className="form-control" ref="recipient" placeholder="johnsmith@internet.gov" id="recipient"/>
+                                <input type="text" className="form-control" ref="recipient"
+                                       placeholder="johnsmith@internet.gov" id="recipient" maxLength="20"/>
                                     <label for="msginput">Message:</label>
-                                    <input type="text" className="form-control" ref="msginput" placeholder="Type Message Here..." id="msginput"/>
+                                    <input type="text" className="form-control" ref="msginput"
+                                           placeholder="Type Message Here..." id="msginput" maxLength="1400"/>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-default" data-dismiss="modal" onClick={this.sendMessage.bind(this)}>Send</button>

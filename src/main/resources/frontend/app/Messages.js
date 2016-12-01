@@ -86,7 +86,7 @@ export default class extends React.Component {
     }
 
     onMessageSendButtonClick(){
-        if (this.messageInput != "") {
+        if (this.messageInput != "" && this.state.activeConvId != 0) {
             this.sendMessage(this.messageInput, this.state.activeConvId);
         }
         this.refs.textInput.value = "";
@@ -150,7 +150,9 @@ export default class extends React.Component {
                                     </div>
                                     <div className="input-group" id="conversation-message-input-box">
 
-                                            <input type="text" className="form-control" placeholder="Type Message..." onChange={this.onMessageInputChange.bind(this)} ref="textInput"/>
+                                            <input type="text" className="form-control" placeholder="Type Message..."
+                                                   onChange={this.onMessageInputChange.bind(this)} ref="textInput"
+                                                   maxLength="1400"/>
                                             <span className="input-group-btn">
                                                 <button className="btn btn-default" type="button" onClick={this.onMessageSendButtonClick.bind(this)}>Send</button>
                                             </span>

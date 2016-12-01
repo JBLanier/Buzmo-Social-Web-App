@@ -269,11 +269,13 @@ export default class extends React.Component {
                                 <p>Leave a field blank to ignore a filter.</p>
                                 <div className="form-group">
                                     <label>Email</label>
-                                    <input onChange={this.onEmailChange.bind(this)} type="text" className="form-control" placeholder="email@buzmo.com"/>
+                                    <input onChange={this.onEmailChange.bind(this)} type="text" className="form-control"
+                                           placeholder="email@buzmo.com" maxLength="2256"/>
                                 </div>
                                 <div className="form-group">
                                     <label>Topics</label>
-                                    <input onChange={this.onTopicsChange.bind(this)} type="text" className="form-control" placeholder="topic1,topic2,..."/>
+                                    <input onChange={this.onTopicsChange.bind(this)} type="text" className="form-control"
+                                           placeholder="topic1,topic2,..." maxLength="2256"/>
                                 </div>
                                 <div className="form-group">
                                     <label>Most recent public posting within last n days.</label>

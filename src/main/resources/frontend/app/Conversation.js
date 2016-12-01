@@ -219,11 +219,13 @@ export default class extends React.Component {
                         <h3>Owner Operations</h3>
                         <label for={"changename"+this.props.id}>Change group name:</label>
                         <input type="text" className="form-control" ref="changename"
-                               placeholder={this.props.name} id={"changename"+this.props.id}/>
+                               placeholder={this.props.name} id={"changename"+this.props.id}
+                               maxLength="20"/>
 
                         <label for={"changeduration"+this.props.id}>Change Message Duration:</label>
                         <input type="text" className="form-control" ref="changeduration"
-                               placeholder={this.state.duration} id={"changeduration"+this.props.id}/>
+                               placeholder={this.state.duration} id={"changeduration"+this.props.id}
+                               maxLength="5"/>
 
                         <span className="input-group-btn">
                             <button className="btn btn-default" type="button"
@@ -269,7 +271,8 @@ export default class extends React.Component {
                                     <label for={"sendinv"+this.props.id}>Send Invite to:</label>
                                     <div className="input-group">
                                             <input type="text" className="form-control" ref="sendinv"
-                                                    placeholder="guy@computernet.net" id={"sendinv"+this.props.id}/>
+                                                    placeholder="guy@computernet.net" id={"sendinv"+this.props.id}
+                                                   maxLength="20"/>
                                             <span className="input-group-btn">
                                                 <button className="btn btn-default" type="button" onClick={this.sendGroupInvite.bind(this)}>Send</button>
                                             </span>
