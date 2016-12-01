@@ -1,6 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
 import Store from './Store'
+import {Link} from 'react-router'
 import {UTCToString} from './Toolbox'
 
 function isNormalPositiveInteger(str) {
@@ -40,6 +41,13 @@ export default class extends React.Component {
             return "";
         }
     }
+    getClassNameActiveReport() {
+        if (window.location.href.includes("#/report")) {
+            return "active";
+        } else {
+            return "";
+        }
+    }
 
     componentDidMount() {
         new Store().getUser(function (user) {
@@ -61,6 +69,18 @@ export default class extends React.Component {
                     </li>
 
             )
+        }
+    }
+
+    renderReportBtn() {
+        if (this.state.isManager) {
+            return (
+                <li className={this.getClassNameActiveReport()}>
+                    <Link to="/report"><span className="glyphicon glyphicon-file"></span></Link>
+                </li>
+            );
+        } else {
+            return "";
         }
     }
 
@@ -132,35 +152,7 @@ export default class extends React.Component {
 
     }
 
-    resetDB() {
-
-        if (confirm("ARE YOU SURE YOU WANT TO RESET THE DB?")) {
-
-            new Store().getAuth(function (auth) {
-                $.ajax({
-                    method: "POST",
-                    url: "http://localhost:8080/api/stub",
-                    beforeSend: function (request) {
-                        request.setRequestHeader("auth_token", auth);
-                    },
-                    data: null,
-                    contentType: null
-                })
-                    .done(function () {
-                        alert("DATABASE RESETTING\nWait a moment for the schema to be initialized...");
-                    })
-                    .fail(function (err) {
-                        alert("Request was met with an error");
-                    });
-
-            }, this);
-        }
-    }
-
     render() {
-
-
-
         return (
             <div>
                 <nav className="navbar navbar-default navbar-fixed-top">
@@ -180,6 +172,7 @@ export default class extends React.Component {
                         <li className={this.getClassNameActiveMessages()} ><a href="#/messages"><span className="glyphicon glyphicon-envelope"></span></a></li>
                         <li className={this.getClassNameActiveMyCircle()} ><a href="#/mycircle"><span className="glyphicon glyphicon-globe"></span></a></li>
                         <li className={this.getClassNameActiveFriends()} ><a href="#/friends"><span className="glyphicon glyphicon-user"></span></a></li>
+                        {this.renderReportBtn()}
                     </ul>
                     <ul className="nav navbar-nav navbar-right">
                         {this.renderManagerOps()}
@@ -206,18 +199,9 @@ export default class extends React.Component {
                             <div className="input-group">
                                 <input type="text" className="form-control" ref="settime" placeholder="UTC in milliseconds" id="settime"/>
                                 <span className="input-group-btn">
-                                                <button className="btn btn-default" type="button" onClick={this.setNewTime.bind(this)}>Set Time</button>
-                                            </span>
+                                    <button className="btn btn-default" type="button" onClick={this.setNewTime.bind(this)}>Set Time</button>
+                                </span>
                             </div>
-
-
-                            <span className="input-group-btn">
-                                <button className="btn btn-default" type="button">Generate Report</button>
-                            </span>
-                            <span className="input-group-btn" >
-                                <button className="btn btn-warning" type="button"
-                                        onClick={this.resetDB}>RESET DB TO SAMPLE STATE</button>
-                            </span>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-default" data-dismiss="modal">Exit</button>
