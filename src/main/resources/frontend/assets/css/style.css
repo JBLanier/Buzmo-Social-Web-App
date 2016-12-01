@@ -29,6 +29,10 @@ html,body{
     margin-top: 60px;
 }
 
+.codeStyle {
+    font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+}
+
 .container-fluid {
     height: 100%;
     overflow-y: hidden; /*dont show content that exceeds the height */
