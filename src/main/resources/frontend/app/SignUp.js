@@ -74,7 +74,7 @@ export default class extends React.Component {
     
     onEmChange(e) {
         //Regex from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript/31311899
-        this.setState({email: e.target.value, emValid: (e.target.value.length > 0 && /^(([^<>()[\]{}'^?\\.,!|//#%*-+=&;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(e.target.value))});
+        this.setState({email: e.target.value, emValid: (e.target.value.length <= 20 && e.target.value.length > 0 && /^(([^<>()[\]{}'^?\\.,!|//#%*-+=&;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(e.target.value))});
     }
     
     fvClass(isValid) {
@@ -90,19 +90,19 @@ export default class extends React.Component {
                             <h1>Welcome :)</h1>
                             <div className={"form-group " + this.fvClass(this.state.fnValid)} >
                                 <label>Name</label>
-                                <input onChange={this.onFnChange.bind(this)} type="text" className="form-control" placeholder="Johnathan Smith" />
+                                <input maxLength="20" onChange={this.onFnChange.bind(this)} type="text" className="form-control" placeholder="Johnathan Smith" />
                             </div>
                                 <div className={"form-group " + this.fvClass(this.state.emValid)} >
                                 <label>Email address</label>
-                                <input onChange={this.onEmChange.bind(this)} type="email" className="form-control" placeholder="jsmith@netscape.net" />
+                                <input maxLength="20" onChange={this.onEmChange.bind(this)} type="email" className="form-control" placeholder="jsmith@netscape.net" />
                             </div>
                             <div className={"form-group " + this.fvClass(this.state.snValid)} >
                                 <label>Screenname</label>
-                                <input onChange={this.onSnChange.bind(this)} type="text" className="form-control" placeholder="JSmith1" />
+                                <input maxLength="20" onChange={this.onSnChange.bind(this)} type="text" className="form-control" placeholder="JSmith1" />
                             </div>
                             <div className={"form-group " + this.fvClass(this.state.phValid)} >
                                 <label>Phone Number</label>
-                                <input onChange={this.onPhChange.bind(this)} type="text" className="form-control" placeholder="8055555555" />
+                                <input maxLength="10" onChange={this.onPhChange.bind(this)} type="text" className="form-control" placeholder="8055555555" />
                             </div>
                             <div className={"form-group " + this.fvClass(this.state.psValid)} >
                                 <label>Password</label>
