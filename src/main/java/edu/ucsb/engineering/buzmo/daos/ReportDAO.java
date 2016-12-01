@@ -75,7 +75,8 @@ public class ReportDAO {
                     "SELECT AVG(READ_COUNT) AS AVG\n" +
                             "FROM (SELECT COUNT(*) AS READ_COUNT\n" +
                             "      FROM MC_READS MR, MESSAGES M\n" +
-                            "      WHERE M.MSG_TIMESTAMP > ?\n" +
+                            "      WHERE M.MSG_TIMESTAMP > ? AND " +
+                            "       MR.MID = M.MID\n" +
                             "      GROUP BY MR.MID)");
             pstmt4.setLong(1, since);
             rs4 = pstmt4.executeQuery();
