@@ -1,6 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
 import Store from './Store'
+import {UTCToString} from './Toolbox'
 
 export default class extends React.Component {
     
@@ -61,7 +62,7 @@ export default class extends React.Component {
             <div className="media-body">
                 <h4 className="media-heading">{this.props.screenname} {this.state.showDelete ? <button className="delete-button" onClick={this.deleteMessage.bind(this)}><span
                     className="glyphicon glyphicon-remove-circle"/></button> : "" }</h4>
-                <p><span className="time">{this.props.utc}</span> - {this.props.readCount} views</p>
+                <p><span className="time">{UTCToString(this.props.utc)}</span> - {this.props.readCount} views</p>
                 <p className="media-body">{this.props.msg}</p>
                 <p className="topics">
                     {this.getTopics()}
