@@ -22,6 +22,9 @@ export default class extends React.Component {
                 }
             })
                 .done((report) => {
+                    report.startUTC =  UTCToString(report.startUTC) + " UTC:  " + report.startUTC;
+                    report.endUTC =  UTCToString(report.endUTC) + " UTC: " + report.endUTC;
+                    report.lowActivityUsers.unshift("Amount: " + report.lowActivityUsers.length)
                     this.setState(report);
                 })
                 .fail(function (err) {

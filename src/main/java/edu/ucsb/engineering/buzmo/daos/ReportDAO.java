@@ -145,10 +145,8 @@ public class ReportDAO {
                             "WHERE B.READ_COUNT = A.MAX_READ_COUNT AND\n" +
                             "      T.TID=A.TID AND\n" +
                             "      B.MID = E.MID AND\n" +
-                            "      U.USERID = E.SENDER AND\n" +
-                            "      E.MSG_TIMESTAMP > ?\n" +
+                            "      U.USERID = E.SENDER\n" +
                             "ORDER BY TID");
-            pstmt8.setLong(1, since);
             rs8 = pstmt8.executeQuery();
 
 

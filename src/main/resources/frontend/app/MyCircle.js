@@ -3,6 +3,7 @@ import $ from 'jquery'
 import Store from './Store'
 import MyCircleMessage from './MyCircleMessage'
 import {CSVSplit} from './Toolbox'
+import {uniq} from './Toolbox'
 
 const MC_FETCH_SIZE = 7;
 
@@ -55,6 +56,7 @@ export default class extends React.Component {
         //prepare topics
         let topics = this.state.qTopics.replace(/[^a-zA-Z0-9\s,]/g, "");
         topics = CSVSplit(topics);
+        topics = uniq(topics);
         //send request
         new Store().getAuth(function (auth) {
             console.log("Searching my circle messages for topics: ", topics);
@@ -84,6 +86,17 @@ export default class extends React.Component {
         let recipients = this.state.sRecipients.replace(/[^a-zA-Z0-9@.\-,]/g, "");
         let topics = this.state.sTopics.replace(/[^a-z\sA-Z0-9,]/g, "");
         topics = CSVSplit(topics);
+
+        topics = uniq(topics);
+        recipients = uniq(recipients);
+
+        for (var i = 0, len = topics.length; i < len; i++) {
+            if (topics[i].length > 30) {
+                alert(topics[i] + " is too long for a topic (30 characters max)");
+                return;
+            }
+        }
+
         recipients = CSVSplit(recipients);
         new Store().getAuth(function (auth) {
             console.log("Posting a new message.");
@@ -204,7 +217,8 @@ export default class extends React.Component {
                             <div className="col-lg-12">
                                 <div className="input-group">
                                     <div className="input-group-addon">Given topics</div>
-                                    <input type="text" className="form-control" placeholder="topic1,topic2,topic3" onChange={this.onTopicsChange.bind(this)} />
+                                    <input type="text" className="form-control" placeholder="topic1,topic2,topic3"
+                                           onChange={this.onTopicsChange.bind(this)} maxLength="2256"/>
                                     <div className="input-group-addon">find at most 7 recent public messages</div>
                                     <div className="input-group-btn">
                                         <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">matching <strong>{this.state.qMatching}</strong> of these topics. <span className="caret"></span></button>
@@ -235,11 +249,15 @@ export default class extends React.Component {
                                 <div className="input-group-addon">
                                     <span className="glyphicon glyphicon-globe"></span> <input onChange={this.setPublic.bind(this)} type="checkbox" />
                                 </div>
-                                <input type="text" onChange={this.setRecipients.bind(this)} className="form-control" placeholder="email1@buzmo.com,email2@buzmo.com,... (default is all your friends)"/>
+                                <input type="text" onChange={this.setRecipients.bind(this)} className="form-control"
+                                       placeholder="email1@buzmo.com,email2@buzmo.com,... (default is all your friends)"
+                                       maxLength="2256"/>
                             </div>
-                            <input type="text" onChange={this.setPostTopics.bind(this)} className="form-control" placeholder="topic1,topic2,... (default is all your topics)"/>
+                            <input type="text" onChange={this.setPostTopics.bind(this)} className="form-control"
+                                   placeholder="topic1,topic2,... (default is all your topics)" maxLength="2256"/>
                             <div className="input-group">
-                                <input type="text" onChange={this.setMsg.bind(this)} className="form-control" placeholder="Type Message..."/>
+                                <input type="text" onChange={this.setMsg.bind(this)} className="form-control"
+                                       placeholder="Type Message..." maxLength="1400"/>
                                 <span className="input-group-btn">
                                     <button onClick={this.post.bind(this)} className="btn btn-default" type="button">Post!</button>
                                 </span>

@@ -14,3 +14,13 @@ export function UTCToString(utc) {
 
     return new Date(utc).toLocaleTimeString("en-us", options); // The 0 there is the key, which sets the date to the epoch
 }
+
+export function uniq(a) {
+    if (!a.isArray) {
+        return a;
+    }
+    var seen = {};
+    return a.filter(function(item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+    });
+}
