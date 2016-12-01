@@ -53,7 +53,7 @@ export default class extends React.Component {
         }
 
         //prepare topics
-        let topics = this.state.qTopics.replace(/[^a-zA-Z0-9,]/g, "");
+        let topics = this.state.qTopics.replace(/[^a-zA-Z0-9\s,]/g, "");
         topics = CSVSplit(topics);
         //send request
         new Store().getAuth(function (auth) {
@@ -186,7 +186,7 @@ export default class extends React.Component {
                                 <div className="input-group">
                                     <div className="input-group-addon">Given topics</div>
                                     <input type="text" className="form-control" placeholder="topic1,topic2,topic3" onChange={this.onTopicsChange.bind(this)} />
-                                    <div className="input-group-addon">find at most 7 recent messages</div>
+                                    <div className="input-group-addon">find at most 7 recent public messages</div>
                                     <div className="input-group-btn">
                                         <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">matching <strong>{this.state.qMatching}</strong> of these topics. <span className="caret"></span></button>
                                         <ul className="dropdown-menu">

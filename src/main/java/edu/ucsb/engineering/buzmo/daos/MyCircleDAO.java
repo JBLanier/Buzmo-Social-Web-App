@@ -196,7 +196,7 @@ public class MyCircleDAO {
                     "    ROWNUM <= ?", Toolbox.getQStr(topics.size())));
             int i = 1;
             for (; i <= topics.size(); i++) {
-                pstmt.setString(i, topics.get(i-1));
+                pstmt.setString(i, topics.get(i-1).toLowerCase());
             }
             pstmt.setLong(i, limit);
             rs = pstmt.executeQuery();
@@ -260,7 +260,7 @@ public class MyCircleDAO {
                     "    ROWNUM <= ?", Toolbox.getQStr(topics.size())));
             int i = 1;
             for (; i <= topics.size(); i++) {
-                pstmt.setString(i, topics.get(i-1));
+                pstmt.setString(i, topics.get(i-1).toLowerCase());
             }
             pstmt.setLong(i, limit);
             rs = pstmt.executeQuery();
@@ -317,9 +317,9 @@ public class MyCircleDAO {
             conn = this.ds.getConnection();
             if (!msg.isBroadcast()) {
                 //check that all emails are valid
-                pstmt6 = conn.prepareStatement(String.format("SELECT COUNT(*) FROM USERS U WHERE U.EMAIL IN (%s)", Toolbox.getQStr(msg.getRecipients().size())));
+                pstmt6 = conn.prepareStatement(String.format("SELECT COUNT(*) FROM USERS U WHERE LOWER(U.EMAIL) IN (%s)", Toolbox.getQStr(msg.getRecipients().size())));
                 for (int i = 0; i < msg.getRecipients().size(); i++) {
-                    pstmt6.setString(i+1, msg.getRecipients().get(i));
+                    pstmt6.setString(i+1, msg.getRecipients().get(i).toLowerCase());
                 }
                 rs = pstmt6.executeQuery();
                 rs.next();
@@ -369,9 +369,9 @@ public class MyCircleDAO {
                 //Insert in MC_MSG_RECIPIENTS if the message isn't broadcast
                 if (!msg.isBroadcast()) {
                     pstmt5 = conn.prepareStatement("INSERT INTO MC_MSG_RECIPIENTS (RECIPIENT, MID) VALUES " +
-                            "((SELECT U.USERID FROM USERS U WHERE U.EMAIL = ?),?)");
+                            "((SELECT U.USERID FROM USERS U WHERE LOWER(U.EMAIL) = ?),?)");
                     for (int i = 0; i < msg.getRecipients().size(); i++) {
-                        pstmt5.setString(1, msg.getRecipients().get(i));
+                        pstmt5.setString(1, msg.getRecipients().get(i).toLowerCase());
                         pstmt5.setLong(2, mid);
                         pstmt5.addBatch();
                     }

@@ -57,7 +57,7 @@ export default class extends React.Component {
     }
 
     onSnChange(e) {
-        this.setState({screenname: e.target.value, snValid: (e.target.value.length > 0 && e.target.value.length <= 20)});
+        this.setState({screenname: e.target.value, snValid: (e.target.value.length >= 0 && e.target.value.length <= 20)});
     }
 
     onPhChange(e) {

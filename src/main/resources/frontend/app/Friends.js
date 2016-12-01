@@ -18,42 +18,46 @@ export default class extends React.Component {
             "n":"",
             "m":"",
             "results": [],
-            "showResults": false
+            "showResults": false,
+            "userId": 0
         };
     }
 
     search() {
         let url = "http://localhost:8080/api/friends/search";
-
-        //prepare topics
-        let topics = this.state.topics.replace(/[^a-z\sA-Z0-9,]/g, "");
-        topics = CSVSplit(topics);
-        //send request
-        new Store().getAuth(function (auth) {
-            $.ajax({
-                method: "POST",
-                url: url,
-                beforeSend: function (request)
-                {
-                    request.setRequestHeader("auth_token", auth);
-                },
-                data: JSON.stringify({
-                    topics: topics.length > 0 ? topics : null,
-                    email: this.state.email || null,
-                    n: this.state.n || null,
-                    m: this.state.m || null
-                }),
-                contentType: "application/json"
-            })
-                .done((results) => {
-                    console.log("Results obtained!");
-                    this.setState({results, showResults: true});
+        
+        new Store().getUser(function(user) {
+            this.setState({userId: user.userid});
+            //prepare topics
+            let topics = this.state.topics.replace(/[^a-z\sA-Z0-9,]/g, "");
+            topics = CSVSplit(topics);
+            //send request
+            new Store().getAuth(function (auth) {
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    beforeSend: function (request)
+                    {
+                        request.setRequestHeader("auth_token", auth);
+                    },
+                    data: JSON.stringify({
+                        topics: topics.length > 0 ? topics : null,
+                        email: this.state.email || null,
+                        n: this.state.n || null,
+                        m: this.state.m || null
+                    }),
+                    contentType: "application/json"
                 })
-                .fail(function (err) {
-                    alert("Could not search topics: " + JSON.stringify(err));
-                });
+                    .done((results) => {
+                        console.log("Results obtained!");
+                        this.setState({results, showResults: true});
+                    })
+                    .fail(function (err) {
+                        alert("Could not search topics: " + JSON.stringify(err));
+                    });
 
-        },this);
+            },this);
+        }, this);
     }
 
     getFriends() {
@@ -138,9 +142,9 @@ export default class extends React.Component {
     getResults() {
         return this.state.results.map((user,idx) => {
             return (<li key={idx}>
-                {user.screenname} {(this.state.friendIds[user.userid] ?
+                {user.screenname} ({user.email}) {(this.state.friendIds[user.userid] ?
                 <span className="glyphicon glyphicon-user"></span> :
-                    <button onClick={() => {this.addFriend(user.userid)}} className="btn btn-default btn-xs"><span className="glyphicon glyphicon-plus"></span></button>
+                ((this.state.userId !== user.userid) ? <button onClick={() => {this.addFriend(user.userid)}} className="btn btn-default btn-xs"><span className="glyphicon glyphicon-plus"></span></button> : "(That's you!)")
             )}
             </li>);
         });
@@ -255,7 +259,7 @@ export default class extends React.Component {
                                 <ul>
                                     {this.getInvites()}
                                 </ul>
-                                <h4>My Friends</h4>
+                                <h4>My Circle of Friends</h4>
                                 <ul>
                                     {this.getFriends()}
                                 </ul>

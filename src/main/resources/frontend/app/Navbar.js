@@ -5,8 +5,12 @@ import {Link} from 'react-router'
 import {UTCToString} from './Toolbox'
 
 function isNormalPositiveInteger(str) {
-    let n = ~~Number(str);
-    return n > 0;
+    var isnum = /^[0-9]+$/.test(str);
+    if (isnum) {
+        return (Number(str) > 0);
+    } else {
+        return false;
+    }
 }
 
 export default class extends React.Component {
@@ -145,7 +149,6 @@ export default class extends React.Component {
 
         } else {
             alert("sorry the time entered wasn't a normal positive integer");
-
         }
 
         this.refs.settime.value = "";

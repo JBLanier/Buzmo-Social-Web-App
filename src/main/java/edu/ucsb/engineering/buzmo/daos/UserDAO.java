@@ -90,8 +90,8 @@ public class UserDAO {
         try {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("SELECT userid, email, full_name, screenname, phone, is_manager " +
-                    "FROM users WHERE EMAIL = ?");
-            pstmt.setString(1,email);
+                    "FROM users WHERE LOWER(EMAIL) = ?");
+            pstmt.setString(1,email.toLowerCase());
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
             if (rs.next()) {
@@ -116,8 +116,8 @@ public class UserDAO {
         try {
             conn = this.ds.getConnection();
             pstmt = conn.prepareStatement("SELECT U.USERID, U.FULL_NAME, U.EMAIL, U.SCREENNAME, U.PHONE, U.IS_MANAGER " +
-                    "FROM USERS U WHERE U.EMAIL = ? AND U.PASSWD = ?");
-            pstmt.setString(1,email);
+                    "FROM USERS U WHERE LOWER(U.EMAIL) = ? AND U.PASSWD = ?");
+            pstmt.setString(1,email.toLowerCase());
             pstmt.setString(2,passwd);
             rs = pstmt.executeQuery();
             //Get the first result, if one is found.
@@ -171,11 +171,11 @@ public class UserDAO {
             pstmt = conn.prepareStatement("INSERT INTO USERS (USERID, EMAIL, FULL_NAME, PASSWD, PHONE, " +
                     "SCREENNAME, IS_MANAGER) " +
                     "VALUES (0,?,?,?,?,?,?)", generatedColumnsUserid);
-            pstmt.setString(1,user.getEmail());
+            pstmt.setString(1,user.getEmail().toLowerCase());
             pstmt.setString(2,user.getName());
             pstmt.setString(3,user.getPasswd());
             pstmt.setLong(4,user.getPhone());
-            pstmt.setString(5,user.getScreenname());
+            pstmt.setString(5,(user.getScreenname().equals("") ? user.getName() : user.getScreenname()));
             pstmt.setInt(6, user.isManager() ? 1 : 0);
             pstmt.executeUpdate();
             rs = pstmt.getGeneratedKeys();
