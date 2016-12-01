@@ -111,7 +111,7 @@ export default class extends React.Component {
                 contentType: "application/json"
             })
                 .done((result) => {
-                    if (!result) {
+                    if (!result && recipients.length > 0) {
                         alert ("You are not friends with all those users!")
                     } else {
                         $.ajax({
