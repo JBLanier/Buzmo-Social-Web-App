@@ -125,7 +125,7 @@ export default class extends React.Component {
                         })
                         .fail(function (err) {
                             alert("Something went wrong with sending the invite.\n" +
-                                "It's likely because they're already in the group.");
+                                "It's likely because they're already invited");
                         });
 
                 },this);

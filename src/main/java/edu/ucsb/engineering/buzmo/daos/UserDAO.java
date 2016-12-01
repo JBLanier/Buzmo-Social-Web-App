@@ -63,7 +63,7 @@ public class UserDAO {
         User toReturn = null;
         try {
             conn = this.ds.getConnection();
-            pstmt = conn.prepareStatement("SELECT userid, email, full_name, screename, phone, is_manager " +
+            pstmt = conn.prepareStatement("SELECT userid, email, full_name, screenname, phone, is_manager " +
                     "FROM users WHERE userid = ?");
             pstmt.setLong(1, userid);
             rs = pstmt.executeQuery();
