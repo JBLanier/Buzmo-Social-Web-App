@@ -179,7 +179,7 @@ public class ReportDAO {
                 List<String> lowActivityUsers =  new ArrayList<>();
                 while (rs7.next()) {
                     //(SELECT U.USERID, U.FULL_NAME, U.SCREENNAME, U.EMAIL, COUNT(M.MID) AS MESSAGE_COUNT
-                    lowActivityUsers.add("User ID: " + rs7.getLong("USERID") + " Full Name " + rs7.getString("FULL_NAME") +
+                    lowActivityUsers.add("User ID: " + rs7.getLong("USERID") + " Full Name: " + rs7.getString("FULL_NAME") +
                     " Screen Name: " + rs7.getString("SCREENNAME") + " Email: " + rs7.getString("EMAIL") + " Message Count: " +
                     rs7.getLong("MESSAGE_COUNT"));
                 }

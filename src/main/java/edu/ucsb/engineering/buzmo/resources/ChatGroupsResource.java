@@ -104,6 +104,19 @@ public class ChatGroupsResource {
 
     }
 
+    @Path("/checkmembership")
+    @POST
+    public Response checkOwnership(@QueryParam("cgid") long cgid, @QueryParam("userid") long userid) throws SQLException {
+
+        boolean result = dao.checkMembership(cgid,userid);
+        if (result) {
+            return Response.status(Response.Status.OK).build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+    }
+
     @Path("/create")
     @POST
     public Response createGroup(ChatGroup chatGroup) {

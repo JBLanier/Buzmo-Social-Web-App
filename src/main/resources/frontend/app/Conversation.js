@@ -53,6 +53,28 @@ export default class extends React.Component {
         },this);
     }
 
+    checkGroupMembership(cgid, userid, callback, context) {
+        new Store().getAuth(function (auth) {
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8080/api/chatgroups/checkmembership?cgid=" + cgid + "&userid="+ userid,
+                beforeSend: function (request)
+                {
+                    request.setRequestHeader("auth_token", auth);
+                },
+                data: null,
+                contentType: null
+            })
+                .done(function (data) {
+                        callback.call(context, true);
+                }.bind(this))
+                .fail(function (err) {
+                    callback.call(context, false);
+                });
+
+        },this)
+    }
+
     getStyle() {
         if (this.props.active) {
             console.log("CONV KNOWS THAT ACTIVE IS: " + this.props.active);
@@ -97,47 +119,53 @@ export default class extends React.Component {
 
         this.getUserInfoFromEmail(email,function(data){
             this.friendCheck(email,function(friend){
-                if (data != undefined && data !=null) {
-                    if (friend == true) {
-                        new Store().getAuth(function (auth) {
-                            $.ajax({
-                                method: "POST",
-                                url: "http://localhost:8080/api/chatgroups/invite/create",
-                                beforeSend: function (request) {
-                                    request.setRequestHeader("auth_token", auth);
-                                },
+                this.checkGroupMembership(this.props.id,data.userid, function(inGroup) {
+                    if (data != undefined && data !=null) {
+                        if (friend == true) {
+                            if(inGroup == false) {
+                                new Store().getAuth(function (auth) {
+                                    $.ajax({
+                                        method: "POST",
+                                        url: "http://localhost:8080/api/chatgroups/invite/create",
+                                        beforeSend: function (request) {
+                                            request.setRequestHeader("auth_token", auth);
+                                        },
 
-                                //     private long mid;
-                                // private long recipient;
-                                // private String msg;
-                                // private long msg_timestamp;
-                                // private long sender;
-                                // private String sender_name;
-                                // private long cgid;
+                                        //     private long mid;
+                                        // private long recipient;
+                                        // private String msg;
+                                        // private long msg_timestamp;
+                                        // private long sender;
+                                        // private String sender_name;
+                                        // private long cgid;
 
 
-                                data: JSON.stringify({
-                                    recipient: data.userid,
-                                    msg: "You're invited to join " + this.props.name,
-                                    cgid: this.props.id
-                                }),
-                                contentType: "application/json"
-                            })
-                                .done(function (data) {
-                                    alert("Message Sent!");
-                                })
-                                .fail(function (err) {
-                                    alert("Something went wrong with sending the invite.\n" +
-                                        "It's likely because they're already invited");
-                                });
+                                        data: JSON.stringify({
+                                            recipient: data.userid,
+                                            msg: "You're invited to join " + this.props.name,
+                                            cgid: this.props.id
+                                        }),
+                                        contentType: "application/json"
+                                    })
+                                        .done(function (data) {
+                                            alert("Message Sent!");
+                                        })
+                                        .fail(function (err) {
+                                            alert("Something went wrong with sending the invite.\n" +
+                                                "It's likely because they're already invited");
+                                        });
 
-                        }, this);
+                                }, this);
+                            } else {
+                                alert(email + " is already in " + this.props.name + ".");
+                            }
+                        } else {
+                            alert("Sorry, you must be friends with " + email + " to invite them.");
+                        }
                     } else {
-                        alert("Sorry, you must be friends with " + email + " to invite them.");
+                        alert("Sorry, " + email + "isn't on Buzmo.");
                     }
-                } else {
-                    alert("Sorry, " + email + "isn't on Buzmo.");
-                }
+                },this)
             },this)
         },this)
     }
