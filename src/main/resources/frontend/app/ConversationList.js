@@ -158,11 +158,19 @@ export default class extends React.Component {
         this.refs.msginput.value="";
 
         this.getUserInfoFromEmail(email,function(data){
-            if (data != undefined && data !=null) {
-                this.props.sendMessage(msg,data.userid);
-            } else {
-                alert("Sorry, " + email + "isn't on Buzmo.");
-            }
+            this.friendCheck(email, function (friend) {
+                if (data != undefined && data !=null) {
+                    if (friend == true) {
+                        this.props.sendMessage(msg,data.userid);
+                    } else {
+                        alert("Sorry, you're not friends with " + email);
+                    }
+
+                } else {
+                    alert("Sorry, " + email + "isn't on Buzmo.");
+                }
+            }, this);
+
         },this)
 
     }
@@ -178,6 +186,28 @@ export default class extends React.Component {
                 },
                 data: null,
                 contentType: null
+            })
+                .done(function (data) {
+                    callback.call(context, data);
+                })
+                .fail(function (err) {
+                    callback.call(context, undefined);
+                });
+
+        },this);
+    }
+
+    friendCheck(email, callback, context) {
+        new Store().getAuth(function (auth) {
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:8080/api/friends/check",
+                beforeSend: function (request)
+                {
+                    request.setRequestHeader("auth_token", auth);
+                },
+                data: JSON.stringify([email]),
+                contentType: "application/json"
             })
                 .done(function (data) {
                     callback.call(context, data);
@@ -217,7 +247,7 @@ export default class extends React.Component {
                                        placeholder="johnsmith@internet.gov" id="recipient" maxLength="20"/>
                                     <label for="msginput">Message:</label>
                                     <input type="text" className="form-control" ref="msginput"
-                                           placeholder="Type Message Here..." id="msginput" maxLength="1400"/>
+                                           placeholder="Type Message Here..." id="msginput" />
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-default" data-dismiss="modal" onClick={this.sendMessage.bind(this)}>Send</button>
