@@ -285,6 +285,25 @@ public class MyCircleDAO {
         return messages;
     }
 
+    public void markRead(long userid, long utc, List<Long> mids) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = this.ds.getConnection();
+            pstmt = conn.prepareStatement("INSERT INTO MC_READS(MID,USERID,UTC) VALUES (?,?,?)");
+            for (Long mid : mids) {
+                pstmt.setLong(1, mid);
+                pstmt.setLong(2, userid);
+                pstmt.setLong(3, utc);
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
+        } finally {
+            try { if (pstmt != null) pstmt.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+        }
+    }
+
     public void createMyCircleMessage(MyCircleMessageCreationRequest msg) throws SQLException, NotAllEmailsValid {
         Connection conn = null;
         PreparedStatement pstmt = null;

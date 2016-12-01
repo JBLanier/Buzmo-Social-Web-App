@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/mycircle")
@@ -36,6 +37,14 @@ public class MyCircleResource {
         this.tk = tk;
     }
 
+    private void markRead(long userid, long utc, List<MyCircleMessage> msgs) throws SQLException {
+        List<Long> mids = new ArrayList<>(msgs.size());
+        for (MyCircleMessage msg : msgs) {
+            mids.add(msg.getMid());
+        }
+        this.dao.markRead(userid, utc, mids);
+    }
+
     @Path("/list")
     @PermitAll
     @GET
@@ -43,6 +52,7 @@ public class MyCircleResource {
         User user = (User) ctxt.getUserPrincipal();
         List<MyCircleMessage> msgs = null;
         msgs = dao.getMessages(user.getUserid(),before, MC_FETCH_SIZE);
+        this.markRead(user.getUserid(), this.tk.getTime(), msgs);
         return Response.ok(msgs).build();
     }
 
@@ -57,6 +67,7 @@ public class MyCircleResource {
         }
         List<MyCircleMessage> msgs = null;
         msgs = dao.searchAtLeastTopics(query, MC_SEARCH_LIMIT);
+        this.markRead(user.getUserid(), this.tk.getTime(), msgs);
         return Response.ok(msgs).build();
     }
 
@@ -71,6 +82,7 @@ public class MyCircleResource {
         }
         List<MyCircleMessage> msgs = null;
         msgs = dao.searchAllTopics(query, MC_SEARCH_LIMIT);
+        this.markRead(user.getUserid(), this.tk.getTime(), msgs);
         return Response.ok(msgs).build();
     }
 
