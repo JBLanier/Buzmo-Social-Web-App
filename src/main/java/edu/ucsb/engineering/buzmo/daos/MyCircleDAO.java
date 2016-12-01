@@ -285,16 +285,31 @@ public class MyCircleDAO {
         return messages;
     }
 
-    public void createMyCircleMessage(MyCircleMessageCreationRequest msg) throws SQLException {
+    public void createMyCircleMessage(MyCircleMessageCreationRequest msg) throws SQLException, NotAllEmailsValid {
         Connection conn = null;
         PreparedStatement pstmt = null;
         PreparedStatement pstmt2 = null;
         PreparedStatement pstmt3 = null;
         PreparedStatement pstmt4 = null;
         PreparedStatement pstmt5 = null;
+        PreparedStatement pstmt6 = null;
         ResultSet rs = null;
         try {
             conn = this.ds.getConnection();
+            if (!msg.isBroadcast()) {
+                //check that all emails are valid
+                pstmt6 = conn.prepareStatement(String.format("SELECT COUNT(*) FROM USERS U WHERE U.EMAIL IN (%s)", Toolbox.getQStr(msg.getRecipients().size())));
+                for (int i = 0; i < msg.getRecipients().size(); i++) {
+                    pstmt6.setString(i+1, msg.getRecipients().get(i));
+                }
+                rs = pstmt6.executeQuery();
+                rs.next();
+                long count = rs.getLong(1);
+                rs.close();
+                if (count != msg.getRecipients().size()) {
+                    throw new NotAllEmailsValid();
+                }
+            }
             String generatedColumnsMid[] = {"MID"};
             pstmt = conn.prepareStatement("INSERT INTO MESSAGES (SENDER,MSG,MSG_TIMESTAMP,IS_DELETED) VALUES (?,?,?,?)",
                     generatedColumnsMid);
@@ -352,6 +367,7 @@ public class MyCircleDAO {
             try { if (pstmt3 != null) pstmt3.close(); } catch (Exception e) {System.out.println(e.getMessage());}
             try { if (pstmt4 != null) pstmt4.close(); } catch (Exception e) {System.out.println(e.getMessage());}
             try { if (pstmt5 != null) pstmt5.close(); } catch (Exception e) {System.out.println(e.getMessage());}
+            try { if (pstmt6 != null) pstmt6.close(); } catch (Exception e) {System.out.println(e.getMessage());}
             try { if (conn != null) conn.close(); } catch (Exception e) {System.out.println(e.getMessage());}
         }
     }

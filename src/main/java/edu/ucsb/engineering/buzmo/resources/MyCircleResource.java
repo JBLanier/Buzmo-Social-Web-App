@@ -2,6 +2,7 @@ package edu.ucsb.engineering.buzmo.resources;
 
 import edu.ucsb.engineering.buzmo.api.*;
 import edu.ucsb.engineering.buzmo.daos.MyCircleDAO;
+import edu.ucsb.engineering.buzmo.daos.NotAllEmailsValid;
 import edu.ucsb.engineering.buzmo.daos.UserDAO;
 import edu.ucsb.engineering.buzmo.util.TimeKeeper;
 
@@ -86,7 +87,11 @@ public class MyCircleResource {
         }
 
         msg.setUtc(tk.getTime()); //override client
-        dao.createMyCircleMessage(msg);
+        try {
+            dao.createMyCircleMessage(msg);
+        } catch (NotAllEmailsValid notAllEmailsValid) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Not all emails are valid.").build();
+        }
         return Response.status(Response.Status.ACCEPTED).build();
 
     }
