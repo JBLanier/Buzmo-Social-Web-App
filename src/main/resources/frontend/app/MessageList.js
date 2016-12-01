@@ -11,7 +11,7 @@ function sortByKeyLowestToHighest(array, key) {
     });
 }
 
-const MESSAGEFETCHLIMIT = 5;
+const MESSAGEFETCHLIMIT = 7;
 
 export default class extends React.Component {
 
