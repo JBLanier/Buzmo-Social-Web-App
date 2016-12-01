@@ -21,7 +21,7 @@ import java.util.List;
 public class ChatGroupsResource {
 
     private static final int LIST_LIMIT = 100;
-    private static final int CONV_LIMIT = 7;
+    private static final int CONV_LIMIT = 5;
 
     private ChatGroupsDAO dao;
     private TimeKeeper tk;

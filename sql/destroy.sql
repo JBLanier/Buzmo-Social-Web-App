@@ -18,6 +18,7 @@ DROP SEQUENCE cgid_seq;
 
 DROP TABLE mc_msg_topics;
 DROP TABLE mc_msg_recipients;
+DROP TABLE MC_READS;
 DROP TABLE mc_messages;
 DROP TABLE messages;
 DROP SEQUENCE mid_seq;

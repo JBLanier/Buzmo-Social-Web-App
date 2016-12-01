@@ -91,10 +91,19 @@ CREATE TABLE mc_messages (
   mid NUMBER(15),
   is_public SMALLINT,
   is_broadcast SMALLINT, /* Is message sent to all friends (including future ones). */
-  read_count NUMBER(10),
   PRIMARY KEY (mid),
   FOREIGN KEY (mid) REFERENCES messages ON DELETE CASCADE
 );
+
+CREATE TABLE mc_reads (
+  mid    NUMBER(15),
+  userid NUMBER(15),
+  utc    NUMBER(15),
+  PRIMARY KEY (mid, userid, utc),
+  FOREIGN KEY (mid) REFERENCES messages ON DELETE CASCADE ,
+  FOREIGN KEY (userid) REFERENCES users ON DELETE CASCADE
+);
+
 /* MyCircle messages sent to specific friends. */
 CREATE TABLE  mc_msg_recipients (
   recipient NUMBER(15),

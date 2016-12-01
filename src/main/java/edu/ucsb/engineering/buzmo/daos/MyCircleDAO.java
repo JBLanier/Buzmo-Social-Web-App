@@ -41,7 +41,7 @@ public class MyCircleDAO {
                     "      M.MSG,\n" +
                     "      S.IS_PUBLIC,\n" +
                     "      S.IS_BROADCAST,\n" +
-                    "      S.READ_COUNT\n" +
+                    "      (SELECT COUNT(*) FROM MC_READS MR WHERE MR.MID = M.MID) AS READ_COUNT\n" +
                     "    FROM MESSAGES M, MC_MESSAGES S, MC_MSG_RECIPIENTS R, USERS U\n" +
                     "    WHERE\n" +
                     "      M.MID = S.MID AND\n" +
@@ -61,7 +61,7 @@ public class MyCircleDAO {
                     "      M.MSG,\n" +
                     "      S.IS_PUBLIC,\n" +
                     "      S.IS_BROADCAST,\n" +
-                    "      S.READ_COUNT\n" +
+                    "      (SELECT COUNT(*) FROM MC_READS MR WHERE MR.MID = M.MID) AS READ_COUNT\n" +
                     "    FROM MESSAGES M, MC_MESSAGES S, USERS U\n" +
                     "    WHERE\n" +
                     "      M.MID = S.MID AND\n" +
@@ -177,7 +177,7 @@ public class MyCircleDAO {
                     "    M.MSG,\n" +
                     "    S.IS_PUBLIC,\n" +
                     "    S.IS_BROADCAST,\n" +
-                    "    S.READ_COUNT\n" +
+                    "    (SELECT COUNT(*) FROM MC_READS MR WHERE MR.MID = M.MID) AS READ_COUNT\n" +
                     "  FROM MESSAGES M, MC_MESSAGES S, USERS U\n" +
                     "  WHERE\n" +
                     "    M.MID = S.MID AND\n" +
@@ -241,7 +241,7 @@ public class MyCircleDAO {
                     "    M.MSG,\n" +
                     "    S.IS_PUBLIC,\n" +
                     "    S.IS_BROADCAST,\n" +
-                    "    S.READ_COUNT\n" +
+                    "    (SELECT COUNT(*) FROM MC_READS MR WHERE MR.MID = M.MID) AS READ_COUNT\n" +
                     "  FROM MESSAGES M, MC_MESSAGES S, USERS U\n" +
                     "  WHERE\n" +
                     "    M.MID = S.MID AND\n" +
@@ -323,11 +323,10 @@ public class MyCircleDAO {
             if (rs.next()) {
                 //Insert into mc_messages.
                 long mid = rs.getLong(1);
-                pstmt2 = conn.prepareStatement("INSERT INTO MC_MESSAGES (MID, IS_PUBLIC, IS_BROADCAST, READ_COUNT) VALUES (?,?,?,?)");
+                pstmt2 = conn.prepareStatement("INSERT INTO MC_MESSAGES (MID, IS_PUBLIC, IS_BROADCAST) VALUES (?,?,?)");
                 pstmt2.setLong(1, mid);
                 pstmt2.setLong(2, msg.isPublic() ? 1 : 0);
                 pstmt2.setLong(3, msg.isBroadcast() ? 1 : 0);
-                pstmt2.setLong(4, 0);
                 pstmt2.executeUpdate();
 
                 //Insert topics
