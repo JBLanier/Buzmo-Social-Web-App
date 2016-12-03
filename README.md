@@ -15,11 +15,19 @@ To run:
 Try visiting `/api/hello` (the sample HelloResource) or `/admin/healthcheck` (part of
 Dropwizard) or `/` (the frontend).
 
-When running add_demo_data.sql from SQLPlus make sure to enter into the prompt:
+When running `add_demo_data.sql` from SQLPlus make sure to enter into the prompt:
 
     set define off
 
 before running:
 
     @add_demo_data.sql
+
+
+To setup and run the frontend:
+
+    cd src/main/resources/frontend
+    npm install
+    npm run
+
 
